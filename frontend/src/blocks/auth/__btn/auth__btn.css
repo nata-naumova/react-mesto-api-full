@@ -1,0 +1,14 @@
+.auth__btn {
+  border: none;
+  cursor: pointer;
+  margin-top: auto;
+  background: #FFFFFF;
+  border-radius: 2px;
+  padding: 14px;
+  width: 100%;
+  transition: opacity 1s linear;
+}
+
+.auth__btn:hover {
+  opacity: 0.8;
+}

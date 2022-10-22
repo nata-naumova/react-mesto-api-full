@@ -1,0 +1,32 @@
+.profile__add-btn {
+    max-width: 150px;
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #FFFFFF;
+    box-sizing: border-box;
+    border-radius: 2px;
+}
+
+.profile__add-btn::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    display: block;
+    background-image: url(../../../images/add-btn.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0 auto;
+}
+
+@media screen and (max-width: 600px) {
+    .profile__add-btn {
+        max-width: 80%;
+        padding: 17px;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .profile__add-btn {
+        max-width: 100%;
+    }
+} 
