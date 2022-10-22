@@ -29,9 +29,20 @@ app.use(bodyParser.json());
 
 // Подключаем роуты
 app.use(express.json());
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(routes);
 
+
+
 // Централизованная обработка ошибок
+app.use(errorLogger);
 app.use(errors());
 app.use(mainErrors);
 
