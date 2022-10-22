@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
 const { errors } = require('celebrate');
 const mainErrors = require('./middlewares/main-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -38,8 +37,6 @@ app.get('/crash-test', () => {
 });
 
 app.use(routes);
-
-
 
 // Централизованная обработка ошибок
 app.use(errorLogger);
