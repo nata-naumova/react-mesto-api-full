@@ -9,7 +9,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 const routes = require('./routes/routes');
 
-// подключаемся к серверу mongo
+// подключаемся к серверу Mongo
 async function main() {
   try {
     await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
