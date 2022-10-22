@@ -1,9 +1,0 @@
-.profile__info {
-    margin-right: auto;
-}
-
-@media screen and (max-width: 600px) {
-    .profile__info {
-        margin-right: 0;
-    }
-}
