@@ -1,0 +1,10 @@
+.popup__input-error {
+    width: 100%;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+}
+.popup__input_error,
+.popup__input_error:focus {
+    border-bottom: 1px solid red;
+}

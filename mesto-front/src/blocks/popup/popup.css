@@ -1,0 +1,16 @@
+.popup {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    /* спрятать */
+    opacity: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
