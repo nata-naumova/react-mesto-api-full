@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const cors = require('cors');
+//const cors = require('cors');
 const helmet = require('helmet');
 
 const { errors } = require('celebrate');
@@ -20,7 +20,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(requestLogger);
 
-app.use(cors());
+const allowedCors = [
+  // eslint-disable-next-line quotes
+  "https://mesto.nata.nomoredomains.icu",
+  // eslint-disable-next-line quotes
+  "http://mesto.nata.nomoredomains.icu",
+  // eslint-disable-next-line quotes
+  "http://localhost:3000",
+];
+
+app.use((req, res, next) => {
+  const { method } = req;
+  const { origin } = req.headers;
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  const requestHeaders = req.headers['access-control-request-headers'];
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', true);
+  }
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    return res.end();
+  }
+  return next();
+});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
