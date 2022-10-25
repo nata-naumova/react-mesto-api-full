@@ -1,10 +1,8 @@
 const jwt = require('jsonwebtoken');
-//const { SEKRET_KEY } = require('../constants');
 const UnauthorizedError = require('../errors/UnauthorizedError'); // 401
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-/* 5. Сделайте мидлвэр для авторизации */
 module.exports = (req, res, next) => {
   const { authorization } = req.headers; // достаём авторизационный заголовок
   if (!authorization || !authorization.startsWith('Bearer ')) {
