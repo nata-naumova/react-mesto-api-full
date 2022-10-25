@@ -10,7 +10,6 @@ const auth = require('../middlewares/auth');
 
 const app = express();
 
-/* 4. Создайте роут для логина и регистрации */
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -42,7 +41,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
-/* 7. Защитите API авторизацией */
+
 app.use(auth);
 
 app.use(userRouter);
