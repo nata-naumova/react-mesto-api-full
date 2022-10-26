@@ -153,12 +153,14 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
+    setLoggedIn(true);
     Auth.authorize(password, email)
       .then((data) => {
         setLoggedIn(true);
         localStorage.setItem('jwt', data.token);
         handleCheckToken();
         history.push('/');
+        return data.token
       })
       .catch((err) => {
         console.log(err);
@@ -176,16 +178,15 @@ function App() {
   /* ---------- Проверка токена ----------- */
   const handleCheckToken = () => {
     const token = localStorage.getItem('jwt');
-    if (!token) {
-      return
-    }
-    Auth.checkToken(token)
+    if (token) {
+      Auth.checkToken(token)
       .then((res) => {
         setEmail(res.data.email);
         setLoggedIn(true);
         history.push('/');
       })
       .catch((err) => console.log(err))
+    }
   }
 
   useEffect(() => {

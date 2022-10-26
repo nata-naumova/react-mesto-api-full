@@ -14,7 +14,9 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(cors);
+app.use(cors({
+  origin: 'https://mesto.nata.nomoredomains.icu',
+}));
 
 // МИДЛВАРЫ
 app.use(bodyParser.json());
