@@ -37,10 +37,12 @@ function App() {
   const [InfoTooltipIsOpened, setInfoTooltipIsOpened] = React.useState(false);
   const history = useHistory();
 
+  const token = localStorage.getItem('jwt');
+
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
+      Promise.all([api.getUserInfo(token), api.getInitialCards(token)])
         .then(([userData, initialCards]) => {
           setCurrentUser(userData);
           setCards(initialCards);
@@ -49,7 +51,7 @@ function App() {
           console.log(`Ошибка: ${err}`);
         });
     }
-  }, [loggedIn]);
+  }, [loggedIn, token]);
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -71,12 +73,12 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
       // Отправляем запрос в API и получаем обновлённые данные карточки
-      api.deleteLike(card, isLiked).then((newCard) => {
+      api.deleteLike(card, token, isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
     else {
-      api.setLike(card, !isLiked).then((newCard) => {
+      api.setLike(card, token, !isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
@@ -84,7 +86,7 @@ function App() {
 
   /* ---------- Кнопка корзины (удаление карточки) ----------- */
   function handleCardDelete(card) {
-    api.deleteCard(card._id).then(() => {
+    api.deleteCard(card._id, token).then(() => {
       setCards((cards) => cards.filter((c) => c._id !== card._id));
     })
       .catch((err) => {
@@ -94,7 +96,7 @@ function App() {
 
   /* ---------- Обновление данных пользователя ----------- */
   function handleUpdateUser(userInfo) {
-    api.editUserInfo(userInfo).then((data) => {
+    api.editUserInfo(userInfo, token).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -104,7 +106,7 @@ function App() {
 
   /* ---------- Обновление аватара ----------- */
   function handleUpdateAvatar(newData) {
-    api.editAvatar(newData).then((data) => {
+    api.editAvatar(newData, token).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -127,8 +129,7 @@ function App() {
 
   /* ---------- Сохранение данных ----------- */
   function handleAddPlaceSubmit(card) {
-    api.addCard(card).then((newCard) => {
-      // Обновляем стейт cards с поммощью расширенной копии текущего массива
+    api.addCard(card, token).then((newCard) => {
       setCards([newCard, ...cards]);
       closeAllPopups();
     }).catch(() => {
