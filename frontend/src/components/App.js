@@ -191,7 +191,8 @@ function App() {
   /* ---------- Проверка токена ----------- */
   const handleCheckToken = () => {
     if(localStorage.getItem('jwt')) {
-      const token = JSON.parse(localStorage.getItem('jwt'));
+      const token = localStorage.getItem('jwt')
+      
       Auth.checkToken(token)
         .then((res) => {
           setToken(token);
