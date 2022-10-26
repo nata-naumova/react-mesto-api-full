@@ -3,7 +3,10 @@ import { optionsApi } from "./optionsApi";
 export const register = ({ password, email }) => {
     return fetch(optionsApi.baseUrl + 'signup', {
         method: "POST",
-        headers: optionsApi.headers,
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify({ password, email }),
     })
     .then(res => {
@@ -20,7 +23,10 @@ export const register = ({ password, email }) => {
 export const authorize = ({ password, email }) => {
     return fetch(optionsApi.baseUrl + 'signin', {
         method: "POST",
-        headers: optionsApi.headers,
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify({ password, email }),
     })
     .then(res => {
@@ -40,7 +46,8 @@ export const checkToken = (token) => {
     return fetch(optionsApi.baseUrl + 'users/me', {
         method: 'GET',
         headers: {
-            ...optionsApi.headers,
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
             "Authorization": 'Bearer ' + token
         }
     })
