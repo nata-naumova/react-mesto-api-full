@@ -1,72 +1,58 @@
-export const BASE_URL = "https://mesto.nata.nomoredomains.icu";
+import { optionsApi } from "./optionsApi";
 
-export const register = (password, email) => {
-    return fetch(`${BASE_URL}/signup`, {
+export const register = ({ password, email }) => {
+    return fetch(optionsApi.baseUrl + 'signup', {
         method: "POST",
-        headers: {
-            "Accept": 'application/json',
-            "Content-Type": "application/json",
-        },
+        headers: optionsApi.headers,
         body: JSON.stringify({ password, email }),
     })
-        .then((response) => {
-            try {
-                if (response.status === 201) {
-                    return response.json();
-                } else if (response.status === 400) {
-                    console.log('некорректно заполнено одно из полей');
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            console.log(err);
+    .then(res => {
+        if (res.ok) {
+            return res.json();
         }
-        );
+        if (res.status === 400) {
+            return Promise.reject(`Ошибка: некорректно заполнено одно из полей`)
+        }
+        return Promise.reject(`Ошибка: ${res.status}`)
+    })
 };
 
-export const authorize = (password, email) => {
-    return fetch(`${BASE_URL}/signin`, {
+export const authorize = ({ password, email }) => {
+    return fetch(optionsApi.baseUrl + 'signin', {
         method: "POST",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
+        headers: optionsApi.headers,
         body: JSON.stringify({ password, email }),
     })
-        .then((response) => {
-            console.log(response);
-            if (response.status === 200) {
-                return response.json();
-            } else if (response.status === 400) {
-                console.log('не передано одно из полей');
-            } else if (response.status === 401) {
-                console.log('401');
-            }
-        })
-        .then((data) => {
-            console.log(data);
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-                return data;
-            }
-        })
-        .catch((err) => console.log(err));
+    .then(res => {
+        if (res.ok) {
+            return res.json();
+        }
+        if (res.status === 400) {
+            return Promise.reject(`Ошибка: не передано одно из полей`)
+        } else if (res.status === 401) {
+            return Promise.reject(`Ошибка: пользователь с email не найден`)
+        }
+        return Promise.reject(`Ошибка: ${res.status}`)
+    })
 };
 
 export const checkToken = (token) => {
-    return fetch(`${BASE_URL}/users/me`, {
+    return fetch(optionsApi.baseUrl + 'users/me', {
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            ...optionsApi.headers,
+            "Authorization": 'Bearer ' + token
         }
     })
-        .then(res => res.json())
-        .then(data => data)
+    .then(res => {
+        if (res.ok) {
+            return res.json();
+        }
+        if (res.status === 400) {
+            return Promise.reject(`Ошибка: токен не передан или передан не в том формате`)
+        } else if (res.status === 401) {
+            return Promise.reject(`Ошибка: переданный токен некорректен`)
+        }
+        return Promise.reject(`Ошибка: ${res.status}`)
+    })
 } 
