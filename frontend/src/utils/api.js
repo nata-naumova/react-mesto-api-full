@@ -1,4 +1,4 @@
-class Api {
+export default class Api {
     constructor(options) {
         this._baseUrl = options.baseUrl;
         this._headers = options.headers;
@@ -11,91 +11,70 @@ class Api {
         return Promise.reject(`Ошибка: ${res.status}`)
     }
 
-    /* ---------- Загрузка информации о пользователе с сервера ----------- */
-    getUserInfo() {
-        return fetch(`${this._baseUrl}/users/me`, {
-            headers: this._headers
+    _fetch({ path, method, body = null, token }) {
+        const url = this._baseUrl + path
+        return fetch(url, {
+            method,
+            headers: {
+                ...this._headers,
+                authorization: 'Bearer ' + token
+            },
+            body
         })
-            .then(this._parseResponse);
+        .then(res => {
+            if(res.ok) {
+                return res.json();
+            }
+            return Promise.reject(`Ошибка: ${res.status}`)
+        })
+    }
+    /* ---------- Загрузка информации о пользователе с сервера ----------- */
+    getUserInfo(token) {
+        return this._fetch({ path: 'users/me', method: 'GET', token })
     }
 
     /* ---------- Загрузка карточек с сервера ----------- */
-    getInitialCards() {
-        return fetch(`${this._baseUrl}/cards`, {
-            headers: this._headers
-        })
-            .then(this._parseResponse);
+    getInitialCards(token) {
+        return this._fetch({ path: 'cards', method: 'GET', token })
     }
 
     /* ---------- Редактирование профиля ----------- */
-    editUserInfo(data) {
-        return fetch(`${this._baseUrl}/users/me`, {
-            method: 'PATCH',
-            headers: this._headers,
-            body: JSON.stringify({
-                name: data.name,
-                about: data.about
-            })
+    editUserInfo(data, token) {
+        const body = JSON.stringify({
+            name: data.name,
+            about: data.about
         })
-            .then(this._parseResponse);
+        return this._fetch({ path: 'users/me', method: 'PATCH', body, token })
     }
 
     /* ---------- Добавление новой карточки ----------- */
-    addCard(data) {
-        return fetch(`${this._baseUrl}/cards`, {
-            method: 'POST',
-            headers: this._headers,
-            body: JSON.stringify({
-                name: data.name,
-                link: data.link
-            })
+    addCard(data, token) {
+        const body = JSON.stringify({
+            name: data.name,
+            link: data.link
         })
-            .then(this._parseResponse);
+        return this._fetch({ path: 'cards', method: 'POST', body, token })
     }
 
     /* ---------- Удаление карточки ----------- */
-    deleteCard(cardId) {
-        return fetch(`${this._baseUrl}/cards/${cardId}`, {
-            method: 'DELETE',
-            headers: this._headers
-        })
-            .then(this._parseResponse);
+    deleteCard(cardId, token) {
+        return this._fetch({ path: `cards/${cardId}`, method: 'DELETE', token })
     }
 
     /* ---------- Постановка и снятие лайка ----------- */
-    setLike(card) {
-        return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-            method: 'PUT',
-            headers: this._headers
-        })
-            .then(this._parseResponse);
+    setLike(card, token) {
+        return this._fetch({ path: `cards/likes/${card._id}`, method: 'PUT', token })
     }
 
-    deleteLike(card) {
-        return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-            method: 'DELETE',
-            headers: this._headers
-        })
-            .then(this._parseResponse);
+    deleteLike(card, token) {
+        return this._fetch({ path: `cards/likes/${card._id}`, method: 'DELETE', token })
     }
 
     /* ---------- Обновление аватара пользователя ----------- */
-    editAvatar(data) {
-        return fetch(`${this._baseUrl}/users/me/avatar`, {
-            method: 'PATCH',
-            headers: this._headers,
-            body: JSON.stringify({
-                avatar: data.avatar
-            })
+    editAvatar(data, token) {
+        const body = JSON.stringify({
+            avatar: data.avatar
         })
-            .then(this._parseResponse);
+        return this._fetch({ path: 'users/me/avatar', method: 'PATCH', body, token })
     }
 }
-const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu/',
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
-
-export default api;
