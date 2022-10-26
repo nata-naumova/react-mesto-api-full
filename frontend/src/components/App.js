@@ -164,6 +164,7 @@ function App() {
     setLoggedIn(true);
     Auth.authorize({ password, email })
       .then((data) => {
+        console.log(data);
         setLoggedIn(true);
         localStorage.setItem('jwt', JSON.stringify(data.token));
         setToken(data.token);
@@ -187,6 +188,7 @@ function App() {
   function handleCheckToken() {
     if (localStorage.getItem('jwt')) {
       const token = JSON.parse(localStorage.getItem('jwt'))
+      console.log(token);
       Auth.checkToken(token)
       .then(() => {
         setToken(token)
@@ -196,13 +198,13 @@ function App() {
       .catch((err) => console.log(err))
     }
   }
-  /*
+  
   useEffect(() => {
     if (loggedIn) {
       history.push('/');
     }
   }, [loggedIn]);
-  */
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
