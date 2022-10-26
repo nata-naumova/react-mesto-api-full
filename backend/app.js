@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const helmet = require('helmet');
 
 const { errors } = require('celebrate');
+const cors = require('./middlewares/cors');
 const mainErrors = require('./middlewares/main-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/routes');
@@ -14,17 +14,13 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+app.use(cors);
+
 // МИДЛВАРЫ
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(requestLogger);
-
-const corsOptions = {
-  origin: ['https://mesto.nata.nomoredomains.icu'],
-};
-
-app.use(cors(corsOptions));
 
 app.get('/crash-test', () => {
   setTimeout(() => {
