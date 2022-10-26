@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const helmet = require('helmet');
 
 const { errors } = require('celebrate');
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(requestLogger);
 
+/*
 const allowedCors = [
   // eslint-disable-next-line quotes
   "https://mesto.nata.nomoredomains.icu",
@@ -44,6 +46,11 @@ app.use((req, res, next) => {
   }
   return next();
 });
+*/
+
+app.use(cors({
+  Origin: 'https://mesto.nata.nomoredomains.icu',
+}));
 
 app.get('/crash-test', () => {
   setTimeout(() => {
