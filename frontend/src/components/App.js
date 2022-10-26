@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import '../index.css';
 import logo from '../logo.svg';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { CurrentCardContext } from '../contexts/CurrentCardContext';
-import Api from '../utils/api';
 
 import { Header } from './Header.js';
 import { Main } from './Main.js';
@@ -19,10 +18,9 @@ import InfoTooltip from "./InfoTooltip";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
-import * as Auth from "../utils/Auth";
-import { optionsApi } from '../utils/optionsApi';
 
-const api = new Api(optionsApi)
+import api from '../utils/api';
+import * as Auth from "../utils/Auth";
 
 function App() {
   /* ---------- Переменные состояния ----------- */
@@ -38,13 +36,11 @@ function App() {
   const [registration, setRegisration] = React.useState(false);
   const [InfoTooltipIsOpened, setInfoTooltipIsOpened] = React.useState(false);
   const history = useHistory();
-  
-  const [token, setToken] = useState('');
 
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      Promise.all([api.getUserInfo(token), api.getInitialCards(token)])
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
           setCurrentUser(userData);
           setCards(initialCards);
@@ -52,16 +48,6 @@ function App() {
         .catch((err) => {
           console.log(`Ошибка: ${err}`);
         });
-    }
-  }, [loggedIn]);
-
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      history.push('/');
     }
   }, [loggedIn]);
 
@@ -85,12 +71,12 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
       // Отправляем запрос в API и получаем обновлённые данные карточки
-      api.deleteLike(card, isLiked, token).then((newCard) => {
+      api.deleteLike(card, isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
     else {
-      api.setLike(card, !isLiked, token).then((newCard) => {
+      api.setLike(card, !isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
@@ -98,7 +84,7 @@ function App() {
 
   /* ---------- Кнопка корзины (удаление карточки) ----------- */
   function handleCardDelete(card) {
-    api.deleteCard(card._id, token).then(() => {
+    api.deleteCard(card._id).then(() => {
       setCards((cards) => cards.filter((c) => c._id !== card._id));
     })
       .catch((err) => {
@@ -108,7 +94,7 @@ function App() {
 
   /* ---------- Обновление данных пользователя ----------- */
   function handleUpdateUser(userInfo) {
-    api.editUserInfo(userInfo, token).then((data) => {
+    api.editUserInfo(userInfo).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -118,7 +104,7 @@ function App() {
 
   /* ---------- Обновление аватара ----------- */
   function handleUpdateAvatar(newData) {
-    api.editAvatar(newData, token).then((data) => {
+    api.editAvatar(newData).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -141,7 +127,7 @@ function App() {
 
   /* ---------- Сохранение данных ----------- */
   function handleAddPlaceSubmit(card) {
-    api.addCard(card, token).then((newCard) => {
+    api.addCard(card).then((newCard) => {
       // Обновляем стейт cards с поммощью расширенной копии текущего массива
       setCards([newCard, ...cards]);
       closeAllPopups();
@@ -184,27 +170,33 @@ function App() {
   const handleSignOut = () => {
     setLoggedIn(false);
     localStorage.removeItem('jwt');
-    setToken('');
     history.push('/sign-in');
   }
 
   /* ---------- Проверка токена ----------- */
   const handleCheckToken = () => {
-    if(localStorage.getItem('jwt')) {
-      const token = localStorage.getItem('jwt')
-      
-      Auth.checkToken(token)
-        .then((res) => {
-          setToken(token);
-          setEmail(res.data.email);
-          setLoggedIn(true);
-          history.push('/');
-        })
-        .catch((err) => console.log(err))
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+      return
     }
-    
-    
+    Auth.checkToken(token)
+      .then((res) => {
+        setEmail(res.data.email);
+        setLoggedIn(true);
+        history.push('/');
+      })
+      .catch((err) => console.log(err))
   }
+
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/');
+    }
+  }, [loggedIn]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

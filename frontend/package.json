@@ -1,5 +1,6 @@
 {
   "name": "react-mesto-auth",
+  "homepage": "./",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -16,7 +17,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "scp -r ./build/* nata-naumova@51.250.106.243:/home/nata-naumova/frontend"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +41,16 @@
   },
   "devDependencies": {
     "gh-pages": "^4.0.0"
+  },
+  "description": "Интерактивная веб-страница, которая позволяет пользователю редактировать профиль и аватар, добавить новую карточку с фотографией и описанием места, удалить свои карточки, ставить и удалять на своих карточках и карточках других пользователей. Все изменения сохраняются на сервере Яндекс.Практикума. Работа портирована с ванильного JavaScript на React JS.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nata-naumova/react-mesto-auth.git"
+  },
+  "author": "Nata Naumova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nata-naumova/react-mesto-auth/issues"
   }
 }

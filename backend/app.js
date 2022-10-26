@@ -2,10 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const helmet = require('helmet');
 
 const { errors } = require('celebrate');
-const cors = require('./middlewares/cors');
 const mainErrors = require('./middlewares/main-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/routes');
@@ -29,7 +29,6 @@ app.get('/crash-test', () => {
 });
 
 app.use(express.json()); // Подключаем роуты
-
 app.use(routes);
 
 // Централизованная обработка ошибок

@@ -1,9 +1,12 @@
-import { optionsApi } from "./optionsApi";
+export const BASE_URL = "https://mesto.nata.nomoredomains.icu";
 
 export const register = (password, email) => {
-    return fetch(optionsApi.baseUrl + 'signup', {
+    return fetch(`${BASE_URL}/signup`, {
         method: "POST",
-        headers: optionsApi.headers,
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify({ password, email }),
     })
         .then((response) => {
@@ -27,9 +30,12 @@ export const register = (password, email) => {
 };
 
 export const authorize = (password, email) => {
-    return fetch(optionsApi.baseUrl + 'signin', {
+    return fetch(`${BASE_URL}/signin`, {
         method: "POST",
-        headers: optionsApi.headers,
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
         body: JSON.stringify({ password, email }),
     })
         .then((response) => {
@@ -53,11 +59,12 @@ export const authorize = (password, email) => {
 };
 
 export const checkToken = (token) => {
-    return fetch(optionsApi.baseUrl + 'users/me', {
+    return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         headers: {
-            ...optionsApi.headers,
-            'Authorization': 'Bearer ' + token
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         }
     })
         .then(res => res.json())
