@@ -12,26 +12,35 @@ class Api {
     }
 
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
-    getUserInfo() {
+    getUserInfo(token) {
         return fetch(`${this._baseUrl}/users/me`, {
-            headers: this._headers
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(this._parseResponse);
     }
 
     /* ---------- Загрузка карточек с сервера ----------- */
-    getInitialCards() {
+    getInitialCards(token) {
         return fetch(`${this._baseUrl}/cards`, {
-            headers: this._headers
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(this._parseResponse);
     }
 
     /* ---------- Редактирование профиля ----------- */
-    editUserInfo(data) {
+    editUserInfo(data, token) {
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
-            headers: this._headers,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 name: data.name,
                 about: data.about
@@ -41,10 +50,13 @@ class Api {
     }
 
     /* ---------- Добавление новой карточки ----------- */
-    addCard(data) {
+    addCard(data, token) {
         return fetch(`${this._baseUrl}/cards`, {
             method: 'POST',
-            headers: this._headers,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 name: data.name,
                 link: data.link
@@ -54,36 +66,48 @@ class Api {
     }
 
     /* ---------- Удаление карточки ----------- */
-    deleteCard(cardId) {
+    deleteCard(cardId, token) {
         return fetch(`${this._baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
-            headers: this._headers
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(this._parseResponse);
     }
 
     /* ---------- Постановка и снятие лайка ----------- */
-    setLike(card) {
+    setLike(card, token) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'PUT',
-            headers: this._headers
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(this._parseResponse);
     }
 
-    deleteLike(card) {
+    deleteLike(card, token) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'DELETE',
-            headers: this._headers
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(this._parseResponse);
     }
 
     /* ---------- Обновление аватара пользователя ----------- */
-    editAvatar(data) {
+    editAvatar(data, token) {
         return fetch(`${this._baseUrl}/users/me/avatar`, {
             method: 'PATCH',
-            headers: this._headers,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
                 avatar: data.avatar
             })
@@ -93,10 +117,6 @@ class Api {
 }
 const api = new Api({
     baseUrl: 'https://mesto.nata.nomoredomains.icu',
-    headers: {
-        authorization: '3e8431a3-54b0-494c-b0b7-18b456b2213e',
-        'Content-Type': 'application/json'
-    }
 });
 
 export default api;
