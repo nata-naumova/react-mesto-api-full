@@ -5,7 +5,6 @@ import logo from '../logo.svg';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { CurrentCardContext } from '../contexts/CurrentCardContext';
-import api from '../utils/api';
 
 import { Header } from './Header.js';
 import { Main } from './Main.js';
@@ -19,6 +18,8 @@ import InfoTooltip from "./InfoTooltip";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
+
+import api from '../utils/api';
 import * as Auth from "../utils/Auth";
 
 function App() {
@@ -156,6 +157,8 @@ function App() {
     Auth.authorize(password, email)
       .then((data) => {
         setLoggedIn(true);
+        console.log(data);
+        console.log(data.token);
         localStorage.setItem('jwt', data.token);
         handleCheckToken();
         history.push('/');
@@ -197,8 +200,6 @@ function App() {
       history.push('/');
     }
   }, [loggedIn]);
-
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
