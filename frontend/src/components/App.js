@@ -182,6 +182,7 @@ function App() {
     if (!token) {
       return
     }
+    console.log(token);
     Auth.checkToken(token)
       .then((res) => {
         setEmail(res.data.email);
@@ -193,7 +194,7 @@ function App() {
 
   useEffect(() => {
     handleCheckToken();
-  }, []);
+  }, [loggedIn]);
 
   useEffect(() => {
     if (loggedIn) {
