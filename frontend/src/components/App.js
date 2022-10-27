@@ -5,6 +5,7 @@ import logo from '../logo.svg';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { CurrentCardContext } from '../contexts/CurrentCardContext';
+import api from '../utils/api';
 
 import { Header } from './Header.js';
 import { Main } from './Main.js';
@@ -18,8 +19,6 @@ import InfoTooltip from "./InfoTooltip";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
-
-import api from '../utils/api';
 import * as Auth from "../utils/Auth";
 
 function App() {
@@ -37,10 +36,6 @@ function App() {
   const [InfoTooltipIsOpened, setInfoTooltipIsOpened] = React.useState(false);
   const history = useHistory();
   //const token = localStorage.getItem('token');
-
-  useEffect(() => {
-    handleCheckToken();
-  }, [history]);
 
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
@@ -158,14 +153,12 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
-    Auth.authorize(email, password)
+    Auth.authorize(password, email)
       .then((data) => {
-        if(data.token) {
-          setLoggedIn(true);
-          localStorage.setItem('jwt', data.token);
-          handleCheckToken();
-          history.push('/');
-        }
+        setLoggedIn(true);
+        localStorage.setItem('jwt', data.token);
+        handleCheckToken();
+        history.push('/');
       })
       .catch((err) => {
         console.log(err);
@@ -188,7 +181,7 @@ function App() {
     }
     Auth.checkToken(token)
       .then((res) => {
-        setEmail(res.email);
+        setEmail(res.data.email);
         setLoggedIn(true);
         history.push('/');
       })
@@ -196,10 +189,16 @@ function App() {
   }
 
   useEffect(() => {
+    handleCheckToken();
+  }, []);
+
+  useEffect(() => {
     if (loggedIn) {
       history.push('/');
     }
   }, [loggedIn]);
+
+
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
