@@ -158,7 +158,7 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
-    Auth.authorize({ email, password })
+    Auth.authorize(email, password)
       .then((data) => {
         if(data) {
           setLoggedIn(true);
