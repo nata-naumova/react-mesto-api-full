@@ -13,22 +13,14 @@ class Api {
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-            },
+            headers: this._headers,
         }).then(this._parseResponse);
     }
 
     /* ---------- Загрузка карточек с сервера ----------- */
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
-            headers: {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
-                },
-            },
+            headers: this._headers,
         }).then(this._parseResponse);
     }
 
@@ -126,7 +118,11 @@ const getToken = () => {
 }
 
 const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu'
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
+    headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        'Content-Type': 'application/json'
+    }
 });
 
 export default api;
