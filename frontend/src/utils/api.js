@@ -3,13 +3,6 @@ class Api {
         this._baseUrl = options.baseUrl;
     }
 
-    get _headers() {
-        return {
-            authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            'Content-Type': 'application/json'
-        }
-    }
-
     _parseResponse(res) {
         if (res.ok) {
             return res.json();
@@ -90,8 +83,13 @@ class Api {
         }).then(this._parseResponse);
     }
 }
+
 const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu'
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
+    headers: {
+        authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        'Content-Type': 'application/json'
+    }
 });
 
 export default api;
