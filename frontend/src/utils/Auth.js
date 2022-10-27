@@ -12,7 +12,7 @@ class Auth {
       return Promise.reject(`Ошибка: ${res.status}`);
     }
   
-    register(email, password) {
+    register({ email, password }) {
       return fetch(`${this._baseUrl}/signup`, {
         method: 'POST',
         headers: this._headers,
@@ -24,7 +24,7 @@ class Auth {
       .then(this._checkResponse);
     }
   
-    authorize(email, password) {
+    authorize({ email, password }) {
       return fetch(`${this._baseUrl}/signin`, {
         method: 'POST',
         headers: this._headers,
