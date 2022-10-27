@@ -19,11 +19,8 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
 
-import Api from '../utils/api';
-import { optionsApi } from '../utils/optionsApi';
-import * as Auth from "../utils/Auth";
-
-const api = new Api(optionsApi);
+import api from '../utils/api';
+import auth from '../utils/Auth';
 
 function App() {
   /* ---------- Переменные состояния ----------- */
@@ -40,16 +37,13 @@ function App() {
   const [InfoTooltipIsOpened, setInfoTooltipIsOpened] = React.useState(false);
   const history = useHistory();
 
-  const [token, setToken] = React.useState('');
-
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      Promise.all([api.getUserInfo(token), api.getInitialCards(token)])
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
           setCurrentUser(userData);
           setCards(initialCards);
-          setEmail(userData.emil);
         })
         .catch((err) => {
           console.log(`Ошибка: ${err}`);
@@ -103,7 +97,7 @@ function App() {
 
   /* ---------- Обновление данных пользователя ----------- */
   function handleUpdateUser(userInfo) {
-    api.editUserInfo(userInfo, token).then((data) => {
+    api.editUserInfo(userInfo).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -113,7 +107,7 @@ function App() {
 
   /* ---------- Обновление аватара ----------- */
   function handleUpdateAvatar(newData) {
-    api.editAvatar(newData, token).then((data) => {
+    api.editAvatar(newData).then((data) => {
       setCurrentUser(data);
       closeAllPopups();
     }).catch(() => {
@@ -136,7 +130,7 @@ function App() {
 
   /* ---------- Сохранение данных ----------- */
   function handleAddPlaceSubmit(card) {
-    api.addCard(card, token).then((newCard) => {
+    api.addCard(card).then((newCard) => {
       setCards([newCard, ...cards]);
       closeAllPopups();
     }).catch(() => {
@@ -146,11 +140,13 @@ function App() {
 
   /* ---------- Регистрация ----------- */
   function handleSubmitRegister({ email, password }) {
-    Auth.register({ password, email })
-      .then(() => {
-        setRegisration(true);
-        openInfoTooltip();
-        history.push('/sign-in');
+    auth.register({ password, email })
+      .then((res) => {
+        if(res) {
+          setRegisration(true);
+          openInfoTooltip();
+          history.push('/sign-in');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -161,18 +157,19 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
-    setLoggedIn(true);
-    Auth.authorize({ password, email })
+    auth.authorize({ password, email })
       .then((data) => {
-        console.log(data);
-        setLoggedIn(true);
-        localStorage.setItem('jwt', JSON.stringify(data.token));
-        setToken(data.token);
-        history.push('/');
+        if(data.token) {
+          localStorage.setItem('jwt', data.token);
+          api.setToken();
+          setLoggedIn(true);
+          history.push('/');
+        }
+        
       })
       .catch((err) => {
-        console.log(err);
         openInfoTooltip();
+        console.log(err);
       });
   }
 
@@ -180,7 +177,6 @@ function App() {
   const handleSignOut = () => {
     setLoggedIn(false);
     localStorage.removeItem('jwt');
-    setToken('');
     history.push('/sign-in');
   }
 
@@ -189,22 +185,24 @@ function App() {
     if (localStorage.getItem('jwt')) {
       const token = JSON.parse(localStorage.getItem('jwt'))
       console.log(token);
-      Auth.checkToken(token)
-      .then(() => {
-        setToken(token)
-        setLoggedIn(true);
-        history.push('/');
+      auth.checkToken(token)
+      .then((res) => {
+        if(res) {
+          setEmail(res.email);
+          setLoggedIn(true);
+          history.push('/');
+        }
       })
       .catch((err) => console.log(err))
     }
   }
-  
+  /*
   useEffect(() => {
     if (loggedIn) {
       history.push('/');
     }
   }, [loggedIn]);
-
+  */
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
