@@ -23,7 +23,7 @@ export const authorize = (password, email) => {
     return fetch(`${BASE_URL}/signin`, {
         method: "POST",
         headers: {
-            //"Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+            "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
             //"Accept": "application/json",
             "Content-Type": "application/json",
         },
