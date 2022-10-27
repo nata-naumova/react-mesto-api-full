@@ -38,6 +38,10 @@ function App() {
   const history = useHistory();
   //const token = localStorage.getItem('token');
 
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
@@ -156,12 +160,12 @@ function App() {
   function handleSubmitLogin({ email, password }) {
     Auth.authorize(password, email)
       .then((data) => {
-        setLoggedIn(true);
-        console.log(data);
-        console.log(data.token);
-        localStorage.setItem('jwt', data.token);
-        handleCheckToken();
-        history.push('/');
+        if(data.token) {
+          setLoggedIn(true);
+          localStorage.setItem('jwt', data.token);
+          handleCheckToken();
+          history.push('/');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -191,10 +195,6 @@ function App() {
       })
       .catch((err) => console.log(err))
   }
-
-  useEffect(() => {
-    handleCheckToken();
-  }, [loggedIn]);
 
   useEffect(() => {
     if (loggedIn) {

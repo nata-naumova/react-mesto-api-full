@@ -3,9 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const { errors } = require('celebrate');
-const cors = require('./middlewares/cors');
+
 const mainErrors = require('./middlewares/main-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/routes');
@@ -14,13 +15,18 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(cors);
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use(cors({
+  origin: [
+    'https://mesto.nata.nomoredomains.icu',
+    'http://mesto.nata.nomoredomains.icu',
+  ],
+  method: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
+}));
 app.use(helmet());
 app.use(requestLogger);
 
