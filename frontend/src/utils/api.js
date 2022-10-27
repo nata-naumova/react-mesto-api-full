@@ -14,6 +14,7 @@ class Api {
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('jwt')}`
             },
         }).then(this._parseResponse);
@@ -23,7 +24,10 @@ class Api {
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+                },
             },
         }).then(this._parseResponse);
     }
