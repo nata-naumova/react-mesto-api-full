@@ -13,8 +13,10 @@ class Api {
 
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
     getUserInfo() {
+        console.log(this._headers);
         return fetch(`${this._baseUrl}/users/me`, {
-            headers: this._headers
+            headers: this._headers,
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
         })
             .then(this._parseResponse);
     }
