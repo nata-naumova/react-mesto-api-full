@@ -15,8 +15,11 @@ class Api {
     getUserInfo() {
         console.log(this._headers);
         return fetch(`${this._baseUrl}/users/me`, {
-            headers: this._headers,
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+            },
         })
             .then(this._parseResponse);
     }
@@ -96,7 +99,6 @@ class Api {
 const api = new Api({
     baseUrl: 'https://mesto.nata.nomoredomains.icu',
     headers: {
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
         'Content-Type': 'application/json'
     }
 });
