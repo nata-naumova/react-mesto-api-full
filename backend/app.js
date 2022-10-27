@@ -20,14 +20,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(cors({
+const options = {
   origin: [
+    'http://localhost:3000',
     'https://mesto.nata.nomoredomains.icu',
     'http://mesto.nata.nomoredomains.icu',
   ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
   credentials: true,
-  method: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
-}));
+};
+
+app.use('*', cors(options));
 app.use(helmet());
 app.use(requestLogger);
 
