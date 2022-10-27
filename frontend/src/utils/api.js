@@ -18,7 +18,7 @@ class Api {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+                authorization: `Bearer ${localStorage.getItem('jwt')}`,
             },
         })
             .then(this._parseResponse);
@@ -27,7 +27,8 @@ class Api {
     /* ---------- Загрузка карточек с сервера ----------- */
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
-            headers: this._headers
+            headers: this._headers,
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
         })
             .then(this._parseResponse);
     }
@@ -99,7 +100,8 @@ class Api {
 const api = new Api({
     baseUrl: 'https://mesto.nata.nomoredomains.icu',
     headers: {
-        'Content-Type': 'application/json'
+        authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        'Content-Type': 'application/json',
     }
 });
 
