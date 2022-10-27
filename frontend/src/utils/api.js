@@ -1,7 +1,6 @@
 class Api {
     constructor(options) {
         this._baseUrl = options.baseUrl;
-        this._headers = options.headers;
     }
     _parseResponse(res) {
         if (res.ok) {
@@ -15,9 +14,10 @@ class Api {
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                //"Content-Type": "application/json",
+                //credentials: 'include',
+                'Authorization': getToken()
             },
         }).then(this._parseResponse);
     }
@@ -26,9 +26,10 @@ class Api {
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                //"Content-Type": "application/json",
+                //credentials: 'include',
+                'Authorization': getToken()
             },
         }).then(this._parseResponse);
     }
@@ -38,9 +39,10 @@ class Api {
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                //credentials: 'include',
+                'Authorization': getToken()
             },
             body: JSON.stringify({
                 name: data.name,
@@ -54,9 +56,10 @@ class Api {
         return fetch(`${this._baseUrl}/cards`, {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                'Authorization': getToken(),
+                'Content-Type': 'application/json',
+                //credentials: 'include',
             },
             body: JSON.stringify({
                 name: data.name,
@@ -70,9 +73,10 @@ class Api {
         return fetch(`${this._baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                'Authorization': getToken(),
+                //'Accept': 'application/json',
+                //"Content-Type": "application/json",
+                //credentials: 'include',
             },
         }).then(this._parseResponse);
     }
@@ -82,9 +86,10 @@ class Api {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'PUT',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                'Authorization': getToken(),
+                'Content-Type': 'application/json',
+                //credentials: 'include',
             },
         }).then(this._parseResponse);
     }
@@ -93,9 +98,10 @@ class Api {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'DELETE',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                'Authorization': getToken(),
+                //'Accept': 'application/json',
+                //"Content-Type": "application/json",
+                //credentials: 'include',
             },
         }).then(this._parseResponse);
     }
@@ -105,9 +111,10 @@ class Api {
         return fetch(`${this._baseUrl}/users/me/avatar`, {
             method: 'PATCH',
             headers: {
-                'Accept': 'application/json',
-                "Content-Type": "application/json",
-                credentials: 'include',
+                //'Accept': 'application/json',
+                'Authorization': getToken(),
+                'Content-Type': 'application/json',
+                //credentials: 'include',
             },
             body: JSON.stringify({
                 avatar: data.avatar,
@@ -115,12 +122,13 @@ class Api {
         }).then(this._parseResponse);
     }
 }
+
+const getToken = () => {
+    return `Bearer ${localStorage.getItem('jwt')}`;
+}
+
 const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    }
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu'
 });
 
 export default api;

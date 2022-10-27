@@ -27,13 +27,12 @@ const options = {
     'http://mesto.nata.nomoredomains.icu',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
   credentials: true,
 };
 
-app.use('*', cors(options));
+app.use(cors(options));
+
 app.use(helmet());
 app.use(requestLogger);
 

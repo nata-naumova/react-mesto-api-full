@@ -158,9 +158,9 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
-    Auth.authorize(password, email)
+    Auth.authorize({ email, password })
       .then((data) => {
-        if(data.token) {
+        if(data) {
           setLoggedIn(true);
           localStorage.setItem('jwt', data.token);
           handleCheckToken();
