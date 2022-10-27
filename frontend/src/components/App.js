@@ -40,8 +40,11 @@ function App() {
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
+      console.log(loggedIn);
       Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
+          console.log("userData" + userData);
+          console.log("initialCards" + initialCards);
           setCurrentUser(userData);
           setCards(initialCards);
         })
