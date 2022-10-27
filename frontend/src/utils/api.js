@@ -115,7 +115,7 @@ class Api {
     }
 }
 const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
+    baseUrl: 'https://mesto.nata.nomoredomains.icu',
     headers: {
         authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
