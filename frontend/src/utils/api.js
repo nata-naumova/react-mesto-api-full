@@ -14,10 +14,7 @@ class Api {
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
             headers: {
-                //'Accept': 'application/json',
-                //"Content-Type": "application/json",
-                //credentials: 'include',
-                'Authorization': getToken()
+                'Authorization': `Bearer ${localStorage.getItem('jwt')}`
             },
         }).then(this._parseResponse);
     }
@@ -26,10 +23,7 @@ class Api {
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
             headers: {
-                //'Accept': 'application/json',
-                //"Content-Type": "application/json",
-                //credentials: 'include',
-                'Authorization': getToken()
+                'Authorization': `Bearer ${localStorage.getItem('jwt')}`
             },
         }).then(this._parseResponse);
     }
