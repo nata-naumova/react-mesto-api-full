@@ -1,63 +1,34 @@
 export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu/";
 
+function parseResponse(res) {
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`)
+}
+
 export const register = (password, email) => {
     return fetch(`${BASE_URL}/signup`, {
         method: "POST",
         headers: {
-            authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            "Accept": 'application/json',
+            //authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            //"Accept": 'application/json',
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ password, email }),
-    })
-        .then((response) => {
-            try {
-                if (response.status === 201) {
-                    return response.json();
-                } else if (response.status === 400) {
-                    console.log('некорректно заполнено одно из полей');
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            console.log(err);
-        }
-        );
+    }).then((res) => parseResponse(res));
 };
 
 export const authorize = (password, email) => {
     return fetch(`${BASE_URL}/signin`, {
         method: "POST",
         headers: {
-            authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            "Accept": "application/json",
+            //"Authorization": `Bearer ${localStorage.getItem('jwt')}`,
+            //"Accept": "application/json",
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ password, email }),
-    })
-        .then((response) => {
-            console.log(response);
-            if (response.status === 200) {
-                return response.json();
-            } else if (response.status === 400) {
-                console.log('не передано одно из полей');
-            } else if (response.status === 401) {
-                console.log('401');
-            }
-        })
-        .then((data) => {
-            console.log(data);
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-                return data;
-            }
-        })
-        .catch((err) => console.log(err));
+    }).then((res) => parseResponse(res));
 };
 
 export const checkToken = (token) => {
@@ -68,7 +39,5 @@ export const checkToken = (token) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         }
-    })
-        .then(res => res.json())
-        .then(data => data)
+    }).then((res) => parseResponse(res));
 }

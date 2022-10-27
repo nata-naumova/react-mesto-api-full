@@ -3,6 +3,14 @@ class Api {
         this._baseUrl = options.baseUrl;
         this._headers = options.headers;
     }
+
+    get _headers() {
+        return {
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+
     _parseResponse(res) {
         if (res.ok) {
             return res.json();
@@ -15,16 +23,14 @@ class Api {
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
             headers: this._headers
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Загрузка карточек с сервера ----------- */
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
             headers: this._headers
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Редактирование профиля ----------- */
@@ -36,8 +42,7 @@ class Api {
                 name: data.name,
                 about: data.about
             })
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Добавление новой карточки ----------- */
@@ -49,8 +54,7 @@ class Api {
                 name: data.name,
                 link: data.link
             })
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Удаление карточки ----------- */
@@ -58,8 +62,7 @@ class Api {
         return fetch(`${this._baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
             headers: this._headers
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Постановка и снятие лайка ----------- */
@@ -67,16 +70,14 @@ class Api {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'PUT',
             headers: this._headers
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     deleteLike(card) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'DELETE',
             headers: this._headers
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 
     /* ---------- Обновление аватара пользователя ----------- */
@@ -87,16 +88,11 @@ class Api {
             body: JSON.stringify({
                 avatar: data.avatar
             })
-        })
-            .then(this._parseResponse);
+        }).then(this._parseResponse);
     }
 }
 const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu/',
-    headers: {
-        authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        'Content-Type': 'application/json'
-    }
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu/'
 });
 
 export default api;
