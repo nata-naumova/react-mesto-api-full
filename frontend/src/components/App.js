@@ -5,6 +5,7 @@ import logo from '../logo.svg';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { CurrentCardContext } from '../contexts/CurrentCardContext';
+import api from '../utils/api';
 
 import { Header } from './Header.js';
 import { Main } from './Main.js';
@@ -18,9 +19,7 @@ import InfoTooltip from "./InfoTooltip";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
-
-import api from '../utils/api';
-import auth from '../utils/Auth';
+import * as Auth from "../utils/Auth";
 
 function App() {
   /* ---------- Переменные состояния ----------- */
@@ -32,10 +31,11 @@ function App() {
   const [cards, setCards] = React.useState([]);
 
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [email, setEmail] = React.useState(''); // eslint-disable-next-line
+  const [email, setEmail] = React.useState('');
   const [registration, setRegisration] = React.useState(false);
   const [InfoTooltipIsOpened, setInfoTooltipIsOpened] = React.useState(false);
   const history = useHistory();
+  //const token = localStorage.getItem('token');
 
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
@@ -50,11 +50,6 @@ function App() {
         });
     }
   }, [loggedIn]);
-
-  // Вход по токену при загрузке страницы
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -72,8 +67,10 @@ function App() {
 
   /* ---------- Кнопка лайка ----------- */
   function handleCardLikeClick(card) {
+    // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
+      // Отправляем запрос в API и получаем обновлённые данные карточки
       api.deleteLike(card, isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
@@ -131,6 +128,7 @@ function App() {
   /* ---------- Сохранение данных ----------- */
   function handleAddPlaceSubmit(card) {
     api.addCard(card).then((newCard) => {
+      // Обновляем стейт cards с поммощью расширенной копии текущего массива
       setCards([newCard, ...cards]);
       closeAllPopups();
     }).catch(() => {
@@ -140,13 +138,11 @@ function App() {
 
   /* ---------- Регистрация ----------- */
   function handleSubmitRegister({ email, password }) {
-    auth.register({ password, email })
+    Auth.register(password, email)
       .then((res) => {
-        if(res) {
-          setRegisration(true);
-          openInfoTooltip();
-          history.push('/sign-in');
-        }
+        setRegisration(true);
+        openInfoTooltip();
+        history.push('/sign-in');
       })
       .catch((err) => {
         console.log(err);
@@ -157,19 +153,16 @@ function App() {
 
   /* ---------- Авторизация ----------- */
   function handleSubmitLogin({ email, password }) {
-    auth.authorize({ password, email })
+    Auth.authorize(password, email)
       .then((data) => {
-        if(data.token) {
-          localStorage.setItem('jwt', data.token);
-          api.setToken();
-          setLoggedIn(true);
-          history.push('/');
-        }
-        
+        setLoggedIn(true);
+        localStorage.setItem('jwt', data.token);
+        handleCheckToken();
+        history.push('/');
       })
       .catch((err) => {
-        openInfoTooltip();
         console.log(err);
+        openInfoTooltip();
       });
   }
 
@@ -181,28 +174,32 @@ function App() {
   }
 
   /* ---------- Проверка токена ----------- */
-  function handleCheckToken() {
-    if (localStorage.getItem('jwt')) {
-      const token = JSON.parse(localStorage.getItem('jwt'))
-      console.log(token);
-      auth.checkToken(token)
+  const handleCheckToken = () => {
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+      return
+    }
+    Auth.checkToken(token)
       .then((res) => {
-        if(res) {
-          setEmail(res.email);
-          setLoggedIn(true);
-          history.push('/');
-        }
+        setEmail(res.data.email);
+        setLoggedIn(true);
+        history.push('/');
       })
       .catch((err) => console.log(err))
-    }
   }
-  /*
+
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
   useEffect(() => {
     if (loggedIn) {
       history.push('/');
     }
   }, [loggedIn]);
-  */
+
+
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">

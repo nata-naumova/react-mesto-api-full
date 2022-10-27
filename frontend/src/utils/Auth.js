@@ -1,60 +1,74 @@
-class Auth {
-    constructor({ baseUrl, headers }) {
-      this._baseUrl = baseUrl;
-      this._headers = headers;
-    }
-  
-    _checkResponse(res) {
-      if (res.ok) {
-        return res.json();
-      }
-  
-      return Promise.reject(`Ошибка: ${res.status}`);
-    }
-  
-    register({ email, password }) {
-      return fetch(`${this._baseUrl}/signup`, {
-        method: 'POST',
-        headers: this._headers,
-        body: JSON.stringify({
-          email: email,
-          password: password
+export const BASE_URL = "https://mesto.nata.nomoredomains.icu";
+
+export const register = (password, email) => {
+    return fetch(`${BASE_URL}/signup`, {
+        method: "POST",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        },
+        body: JSON.stringify({ password, email }),
+    })
+        .then((response) => {
+            try {
+                if (response.status === 201) {
+                    return response.json();
+                } else if (response.status === 400) {
+                    console.log('некорректно заполнено одно из полей');
+                }
+            } catch (e) {
+                console.log(e);
+            }
         })
-      })
-      .then(this._checkResponse);
-    }
-  
-    authorize({ email, password }) {
-      return fetch(`${this._baseUrl}/signin`, {
-        method: 'POST',
-        headers: this._headers,
-        body: JSON.stringify({
-          email: email,
-          password: password
+        .then((res) => {
+            return res;
         })
-      })
-      .then(this._checkResponse);
-    }
-  
-    checkToken(token)  {
-      return fetch(`${this._baseUrl}/users/me`, {
+        .catch((err) => {
+            console.log(err);
+        }
+        );
+};
+
+export const authorize = (password, email) => {
+    return fetch(`${BASE_URL}/signin`, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        },
+        body: JSON.stringify({ password, email }),
+    })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else if (response.status === 400) {
+                console.log('не передано одно из полей');
+            } else if (response.status === 401) {
+                console.log('401');
+            }
+        })
+        .then((data) => {
+            console.log(data);
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                return data;
+            }
+        })
+        .catch((err) => console.log(err));
+};
+
+export const checkToken = (token) => {
+    return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         }
-      })
-      .then(this._checkResponse);
-    }
-  }
-  
-  const auth = new Auth({
-    baseUrl: 'https://mesto.nata.nomoredomains.icu',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    }
-  });
-  
-  export default auth;
+    })
+        .then(res => res.json())
+        .then(data => data)
+} 

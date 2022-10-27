@@ -14,8 +14,6 @@ class Api {
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
-            method: 'GET',
-            credentials: 'include',
             headers: this._headers
         })
             .then(this._parseResponse);
@@ -24,8 +22,6 @@ class Api {
     /* ---------- Загрузка карточек с сервера ----------- */
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
-            method: 'GET',
-            credentials: 'include',
             headers: this._headers
         })
             .then(this._parseResponse);
@@ -35,7 +31,6 @@ class Api {
     editUserInfo(data) {
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: this._headers,
             body: JSON.stringify({
                 name: data.name,
@@ -49,7 +44,6 @@ class Api {
     addCard(data) {
         return fetch(`${this._baseUrl}/cards`, {
             method: 'POST',
-            credentials: 'include',
             headers: this._headers,
             body: JSON.stringify({
                 name: data.name,
@@ -63,7 +57,6 @@ class Api {
     deleteCard(cardId) {
         return fetch(`${this._baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
-            credentials: 'include',
             headers: this._headers
         })
             .then(this._parseResponse);
@@ -73,7 +66,6 @@ class Api {
     setLike(card) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'PUT',
-            credentials: 'include',
             headers: this._headers
         })
             .then(this._parseResponse);
@@ -82,7 +74,6 @@ class Api {
     deleteLike(card) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'DELETE',
-            credentials: 'include',
             headers: this._headers
         })
             .then(this._parseResponse);
@@ -92,7 +83,6 @@ class Api {
     editAvatar(data) {
         return fetch(`${this._baseUrl}/users/me/avatar`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: this._headers,
             body: JSON.stringify({
                 avatar: data.avatar
@@ -100,19 +90,12 @@ class Api {
         })
             .then(this._parseResponse);
     }
-
-    setToken() {
-        this.headers['Authorization'] = `Bearer ${localStorage.getItem('jwt')}`;
-    }
 }
-
-const jwt = localStorage.getItem('jwt');
-
 const api = new Api({
     baseUrl: 'https://mesto.nata.nomoredomains.icu',
     headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwt}`,
+        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+        'Content-Type': 'application/json'
     }
 });
 

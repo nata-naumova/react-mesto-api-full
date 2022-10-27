@@ -1,8 +1,8 @@
 const allowedCors = [
-  'http://localhost:3000',
-  'http://localhost:3001',
   'https://mesto.nata.nomoredomains.icu',
   'http://mesto.nata.nomoredomains.icu',
+  'http://localhost:3000',
+  'http://localhost:3001',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
