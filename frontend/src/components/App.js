@@ -161,6 +161,7 @@ function App() {
     Auth.authorize(email, password)
       .then((data) => {
         if(data) {
+          console.log(data);
           setLoggedIn(true);
           localStorage.setItem('jwt', data.token);
           handleCheckToken();
