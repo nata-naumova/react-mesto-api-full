@@ -25,6 +25,7 @@ app.use(cors({
     'https://mesto.nata.nomoredomains.icu',
     'http://mesto.nata.nomoredomains.icu',
   ],
+  credentials: true,
   method: ['GET,HEAD,PUT,PATCH,POST,DELETE'],
 }));
 app.use(helmet());
