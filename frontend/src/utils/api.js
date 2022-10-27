@@ -19,7 +19,6 @@ class Api {
 
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
     getUserInfo() {
-        console.log(this._headers);
         return fetch(`${this._baseUrl}/users/me`, {
             headers: {
                 authorization: `Bearer ${this._getToken()}`,
@@ -115,7 +114,7 @@ class Api {
     }
 }
 const api = new Api({
-    baseUrl: 'https://mesto.nata.nomoredomains.icu',
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
     headers: {
         authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
