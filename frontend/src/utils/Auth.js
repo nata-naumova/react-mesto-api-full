@@ -1,4 +1,4 @@
-export const BASE_URL = "https://mesto.nata.nomoredomains.icu";
+export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu";
 
 function checkResponse(res) {
     if (res.ok) {

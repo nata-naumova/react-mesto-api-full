@@ -109,7 +109,7 @@ class Api {
     }
 }
 const api = new Api({
-    baseUrl: 'https://mesto.nata.nomoredomains.icu',
+    baseUrl: 'https://api.mesto.nata.nomoredomains.icu',
     headers: {
         authorization: `Bearer ${localStorage.getItem('jwt')}`,
         'Content-Type': 'application/json',
