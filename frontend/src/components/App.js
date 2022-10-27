@@ -38,27 +38,23 @@ function App() {
   const history = useHistory();
   //const token = localStorage.getItem('token');
 
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      api.getUserInfo()
-      .then(res => {
-        setCurrentUser(res);
-      })
-      .catch(err => console.log(err));
-      api.getInitialCards()
-        .then((res) => {
-          setCards(res.data);
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
+        .then(([userData, initialCards]) => {
+          setCurrentUser(userData);
+          setCards(initialCards);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(`Ошибка: ${err}`);
         });
     }
   }, [loggedIn]);
-
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -188,23 +184,24 @@ function App() {
   /* ---------- Проверка токена ----------- */
   const handleCheckToken = () => {
     const token = localStorage.getItem('jwt');
-    if (token) {
-      Auth.checkToken(token)
+    if (!token) {
+      return
+    }
+    Auth.checkToken(token)
       .then((res) => {
         setEmail(res.email);
         setLoggedIn(true);
         history.push('/');
       })
       .catch((err) => console.log(err))
-    }
   }
-  /*
+
   useEffect(() => {
     if (loggedIn) {
       history.push('/');
     }
   }, [loggedIn]);
-  */
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
