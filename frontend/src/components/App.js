@@ -40,7 +40,7 @@ function App() {
 
   useEffect(() => {
     handleCheckToken();
-  }, []);
+  }, [history]);
 
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
@@ -160,8 +160,7 @@ function App() {
   function handleSubmitLogin({ email, password }) {
     Auth.authorize(email, password)
       .then((data) => {
-        if(data) {
-          console.log(data);
+        if(data.token) {
           setLoggedIn(true);
           localStorage.setItem('jwt', data.token);
           handleCheckToken();
