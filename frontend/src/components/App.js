@@ -74,12 +74,12 @@ function App() {
   function handleCardLikeClick(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     if (isLiked) {
-      api.deleteLike(card, token, isLiked).then((newCard) => {
+      api.deleteLike(card, isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
     else {
-      api.setLike(card, token, !isLiked).then((newCard) => {
+      api.setLike(card, !isLiked).then((newCard) => {
         setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
@@ -87,7 +87,7 @@ function App() {
 
   /* ---------- Кнопка корзины (удаление карточки) ----------- */
   function handleCardDelete(card) {
-    api.deleteCard(card._id, token).then(() => {
+    api.deleteCard(card._id).then(() => {
       setCards((cards) => cards.filter((c) => c._id !== card._id));
     })
       .catch((err) => {
