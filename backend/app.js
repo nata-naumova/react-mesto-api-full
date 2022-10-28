@@ -24,6 +24,12 @@ const options = {
   origin: [
     'https://mesto.nata.nomoredomains.icu',
     'http://mesto.nata.nomoredomains.icu',
+    'https://api.mesto.nata.nomoredomains.icu',
+    'http://api.mesto.nata.nomoredomains.icu',
+    'https://localhost:3000',
+    'http://localhost:3000',
+    'https://localhost:3001',
+    'http://localhost:3001',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
