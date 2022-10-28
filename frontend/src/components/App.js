@@ -53,18 +53,10 @@ function App() {
     }
   }, [history]);
 
-  /*
-  useEffect(() => {
-    if (loggedIn) {
-      history.push('/');
-    }
-  }, [loggedIn]);
-  */
-
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      return Promise.all([api.getUserInfo(), api.getInitialCards()])
+      api.renderUserAndCards()
         .then(([userData, initialCards]) => {
           setCurrentUser(userData);
           setCards(initialCards);

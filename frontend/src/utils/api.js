@@ -33,6 +33,11 @@ class Api {
         }).then(this._parseResponse);
     }
 
+    /* ---------- Возврат массива этих промисов ----------- */
+    renderUserAndCards() {
+        return Promise.all([this.getUserInfo(), this.getInitialCards()])
+    }
+
     /* ---------- Редактирование профиля ----------- */
     editUserInfo(data) {
         return fetch(`${this._baseUrl}/users/me`, {
