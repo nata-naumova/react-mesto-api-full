@@ -34,9 +34,11 @@ class Api {
     }
 
     /* ---------- Возврат массива этих промисов ----------- */
+    /*
     renderUserAndCards() {
         return Promise.all([this.getUserInfo(), this.getInitialCards()])
     }
+    */
 
     /* ---------- Редактирование профиля ----------- */
     editUserInfo(data) {

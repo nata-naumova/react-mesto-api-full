@@ -54,6 +54,8 @@ function App() {
   }, [history]);
 
   /* ---------- Эффект при монтировании ----------- */
+
+  /*
   useEffect(() => {
     if (loggedIn) {
       api.renderUserAndCards()
@@ -66,6 +68,18 @@ function App() {
         });
     }
   }, [loggedIn]);
+  */
+  useEffect(() => {
+    if (loggedIn) {
+      api.getUserInfo()
+        .then((user) => { setCurrentUser(user) })
+        .catch((err) => { console.log(`Ошибка: ${err}`) });
+      api.getInitialCards()
+        .then(cardList => { setCards(cardList) })
+        .catch((err) => { console.log(`Ошибка: ${err}`) });
+    }
+  }, [loggedIn]);
+
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
