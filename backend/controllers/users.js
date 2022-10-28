@@ -10,8 +10,7 @@ const ConflictError = require('../errors/ConflictError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const SALT_ROUNDS = 10;
-/* 3. Создайте контроллер login */
-//  login -  получает из запроса почту и пароль и проверяет их
+
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -25,14 +24,14 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-// Получение пользователей
+/* Получение пользователей */
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch(next);
 };
 
-// Получение пользователя по его id
+/* Получение пользователя по его id */
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
@@ -46,8 +45,8 @@ module.exports.getUserById = (req, res, next) => {
       return next(err);
     });
 };
-/* 2. Доработайте контроллер createUser */
-// Создание нового пользователя
+
+/* Создание нового пользователя */
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -72,8 +71,8 @@ module.exports.createUser = (req, res, next) => {
       return next(err);
     });
 };
-/* 6. Создайте контроллер и роут для получения информации о пользователе */
-// Возвращаем информацию о текущем пользователе
+
+/* Возвращаем информацию о текущем пользователе */
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -85,7 +84,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => next(err));
 };
 
-// Обновление информации о пользователе
+/* Обновление информации о пользователе */
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
@@ -107,7 +106,7 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-// Обновление аватара пользователя
+/* Обновление аватара пользователя */
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 

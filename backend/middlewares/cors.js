@@ -1,7 +1,7 @@
 const allowedCors = [
   'https://mesto.nata.nomoredomains.icu',
   'http://mesto.nata.nomoredomains.icu',
-  'http://localhost:3001',
+  'http://localhost:3000',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
 
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', true);
 
     if (method === 'OPTIONS') {
       res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);

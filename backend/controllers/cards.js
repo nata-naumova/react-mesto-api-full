@@ -5,7 +5,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 
 // Получение карточек
 module.exports.getCards = (req, res, next) => {
-  Card.find({})
+  Card.find({ owner: req.user._id })
     .then((cards) => res.status(200).send(cards))
     .catch(next);
 };

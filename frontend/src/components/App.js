@@ -37,13 +37,26 @@ function App() {
   const history = useHistory();
   //const token = localStorage.getItem('token');
 
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+  /*
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/');
+    }
+  }, [loggedIn]);
+  */
+
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
       Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
           setCurrentUser(userData);
+          console.log(userData);
           setCards(initialCards);
+          console.log(initialCards);
         })
         .catch((err) => {
           console.log(`Ошибка: ${err}`);
@@ -187,18 +200,6 @@ function App() {
       })
       .catch((err) => console.log(err))
   }
-
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      history.push('/');
-    }
-  }, [loggedIn]);
-
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

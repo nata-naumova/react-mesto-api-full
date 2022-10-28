@@ -14,7 +14,9 @@ class Api {
     /* ---------- Загрузка информации о пользователе с сервера ----------- */
     getUserInfo() {
         return fetch(`${this._baseUrl}/users/me`, {
-            headers: this._headers
+            method: 'GET',
+            headers: this._headers,
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -22,7 +24,9 @@ class Api {
     /* ---------- Загрузка карточек с сервера ----------- */
     getInitialCards() {
         return fetch(`${this._baseUrl}/cards`, {
-            headers: this._headers
+            method: 'GET',
+            headers: this._headers,
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -35,7 +39,8 @@ class Api {
             body: JSON.stringify({
                 name: data.name,
                 about: data.about
-            })
+            }),
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -48,7 +53,8 @@ class Api {
             body: JSON.stringify({
                 name: data.name,
                 link: data.link
-            })
+            }),
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -57,7 +63,8 @@ class Api {
     deleteCard(cardId) {
         return fetch(`${this._baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
-            headers: this._headers
+            headers: this._headers,
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -66,7 +73,8 @@ class Api {
     setLike(card) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'PUT',
-            headers: this._headers
+            headers: this._headers,
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -74,7 +82,8 @@ class Api {
     deleteLike(card) {
         return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
             method: 'DELETE',
-            headers: this._headers
+            headers: this._headers,
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }
@@ -86,7 +95,8 @@ class Api {
             headers: this._headers,
             body: JSON.stringify({
                 avatar: data.avatar
-            })
+            }),
+            credentials: 'include',
         })
             .then(this._parseResponse);
     }

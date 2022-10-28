@@ -3,10 +3,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const cors = require('cors');
 
 const { errors } = require('celebrate');
-
+const cors = require('./middlewares/cors');
 const mainErrors = require('./middlewares/main-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const routes = require('./routes/routes');
@@ -19,23 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
-
-const options = {
-  origin: [
-    'https://mesto.nata.nomoredomains.icu',
-    'http://mesto.nata.nomoredomains.icu',
-    'https://api.mesto.nata.nomoredomains.icu',
-    'http://api.mesto.nata.nomoredomains.icu',
-    'https://localhost:3000',
-    'http://localhost:3000',
-    'https://localhost:3001',
-    'http://localhost:3001',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-};
-
-app.use(cors(options));
+app.use(cors);
 
 app.use(helmet());
 app.use(requestLogger);
