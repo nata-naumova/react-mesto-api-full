@@ -22,7 +22,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 const options = {
   origin: [
-    'http://localhost:3000',
     'https://mesto.nata.nomoredomains.icu',
     'http://mesto.nata.nomoredomains.icu',
   ],

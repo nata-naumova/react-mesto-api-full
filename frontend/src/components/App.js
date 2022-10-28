@@ -37,49 +37,19 @@ function App() {
   const history = useHistory();
   //const token = localStorage.getItem('token');
 
-  /* ---------- Проверка токена ----------- */ 
-  useEffect(() => {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      Auth.checkToken(token)
-      .then((res) => {
-        if(res) {
-          setEmail(res.email);
-          setLoggedIn(true);
-          history.push('/');
-        }  
-      })
-      .catch((err) => console.log(err))
-    }
-  }, [history]);
-
   /* ---------- Эффект при монтировании ----------- */
-
-  /*
   useEffect(() => {
     if (loggedIn) {
-      api.renderUserAndCards()
+      Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
-          setCurrentUser(userData.data);
-          setCards(initialCards.data);
+          setCurrentUser(userData);
+          setCards(initialCards);
         })
         .catch((err) => {
           console.log(`Ошибка: ${err}`);
         });
     }
   }, [loggedIn]);
-  */
-  useEffect(() => {
-    if (loggedIn) {
-      api.getUserInfo()
-        .then((user) => { setCurrentUser(user) })
-        .catch((err) => { console.log(`Ошибка: ${err}`) });
-      api.getInitialCards()
-        .then(cardList => { setCards(cardList) })
-        .catch((err) => { console.log(`Ошибка: ${err}`) });
-    }
-  }, [loggedIn]);
-
 
   const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(true);
@@ -185,12 +155,10 @@ function App() {
   function handleSubmitLogin({ email, password }) {
     Auth.authorize(password, email)
       .then((data) => {
-        if(data.token) {
-          setEmail(email);
-          setLoggedIn(true);
-          localStorage.setItem('jwt', data.token);
-          history.push('/');
-        }
+        setLoggedIn(true);
+        localStorage.setItem('jwt', data.token);
+        handleCheckToken();
+        history.push('/');
       })
       .catch((err) => {
         console.log(err);
@@ -201,10 +169,36 @@ function App() {
   /* ---------- Кнопка Выйти ----------- */
   const handleSignOut = () => {
     setLoggedIn(false);
-    setEmail('');
     localStorage.removeItem('jwt');
     history.push('/sign-in');
   }
+
+  /* ---------- Проверка токена ----------- */
+  const handleCheckToken = () => {
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+      return
+    }
+    Auth.checkToken(token)
+      .then((res) => {
+        setEmail(res.data.email);
+        setLoggedIn(true);
+        history.push('/');
+      })
+      .catch((err) => console.log(err))
+  }
+
+  useEffect(() => {
+    handleCheckToken();
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/');
+    }
+  }, [loggedIn]);
+
+
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
