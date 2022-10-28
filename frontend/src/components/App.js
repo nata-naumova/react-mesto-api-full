@@ -58,8 +58,8 @@ function App() {
     if (loggedIn) {
       api.renderUserAndCards()
         .then(([userData, initialCards]) => {
-          setCurrentUser(userData);
-          setCards(initialCards);
+          setCurrentUser(userData.data);
+          setCards(initialCards.data);
         })
         .catch((err) => {
           console.log(`Ошибка: ${err}`);
