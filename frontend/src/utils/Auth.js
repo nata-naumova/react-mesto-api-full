@@ -1,4 +1,4 @@
-export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu";
+export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu"; //back link
 
 function parseResponse(res) {
     if (res.ok) {
@@ -10,11 +10,7 @@ function parseResponse(res) {
 export const register = (password, email) => {
     return fetch(`${BASE_URL}/signup`, {
         method: "POST",
-        headers: {
-            //authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            //"Accept": 'application/json',
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password, email }),
     }).then((res) => parseResponse(res));
 };
@@ -22,11 +18,7 @@ export const register = (password, email) => {
 export const authorize = (password, email) => {
     return fetch(`${BASE_URL}/signin`, {
         method: "POST",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
-            //"Accept": "application/json",
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password, email }),
     }).then((res) => parseResponse(res));
 };
@@ -35,7 +27,7 @@ export const checkToken = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         headers: {
-            'Accept': 'application/json',
+            //'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         }

@@ -37,14 +37,35 @@ function App() {
   const history = useHistory();
   //const token = localStorage.getItem('token');
 
+  /* ---------- Проверка токена ----------- */ 
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      Auth.checkToken(token)
+      .then((res) => {
+        if(res) {
+          setEmail(res.email);
+          setLoggedIn(true);
+          history.push('/');
+        }  
+      })
+      .catch((err) => console.log(err))
+    }
+  }, [history]);
+
+  /*
+  useEffect(() => {
+    if (loggedIn) {
+      history.push('/');
+    }
+  }, [loggedIn]);
+  */
+
   /* ---------- Эффект при монтировании ----------- */
   useEffect(() => {
     if (loggedIn) {
-      console.log(loggedIn);
-      Promise.all([api.getUserInfo(), api.getInitialCards()])
+      return Promise.all([api.getUserInfo(), api.getInitialCards()])
         .then(([userData, initialCards]) => {
-          console.log("userData" + userData);
-          console.log("initialCards" + initialCards);
           setCurrentUser(userData);
           setCards(initialCards);
         })
@@ -158,10 +179,12 @@ function App() {
   function handleSubmitLogin({ email, password }) {
     Auth.authorize(password, email)
       .then((data) => {
-        setLoggedIn(true);
-        localStorage.setItem('jwt', data.token);
-        handleCheckToken();
-        history.push('/');
+        if(data.token) {
+          setEmail(email);
+          setLoggedIn(true);
+          localStorage.setItem('jwt', data.token);
+          history.push('/');
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -172,36 +195,10 @@ function App() {
   /* ---------- Кнопка Выйти ----------- */
   const handleSignOut = () => {
     setLoggedIn(false);
+    setEmail('');
     localStorage.removeItem('jwt');
     history.push('/sign-in');
   }
-
-  /* ---------- Проверка токена ----------- */
-  const handleCheckToken = () => {
-    const token = localStorage.getItem('jwt');
-    if (!token) {
-      return
-    }
-    Auth.checkToken(token)
-      .then((res) => {
-        setEmail(res.email);
-        setLoggedIn(true);
-        history.push('/');
-      })
-      .catch((err) => console.log(err))
-  }
-
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
-
-  useEffect(() => {
-    if (loggedIn) {
-      history.push('/');
-    }
-  }, [loggedIn]);
-
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

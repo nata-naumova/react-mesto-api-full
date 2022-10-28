@@ -28,7 +28,6 @@ const options = {
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-  //credentials: true,
 };
 
 app.use(cors(options));
