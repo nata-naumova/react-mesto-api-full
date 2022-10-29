@@ -76,5 +76,5 @@ export class Auth {
 }
 
 export const auth = new Auth({
-    baseURL: 'http://localhost:3000',
+    baseURL: 'https://api.mesto.nata.nomoredomains.icu',
 })

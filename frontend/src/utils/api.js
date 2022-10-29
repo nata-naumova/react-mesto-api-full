@@ -116,5 +116,5 @@ export class Api {
 }
 
 export const api = new Api({
-  source: 'http://localhost:3000',
+  source: 'https://api.mesto.nata.nomoredomains.icu',
 })

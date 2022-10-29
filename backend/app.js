@@ -25,7 +25,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(cors({
-  Origin: 'http://localhost:3001',
+  Origin: 'https://mesto.nata.nomoredomains.icu',
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
