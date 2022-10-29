@@ -19,7 +19,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "scp -r ./build/* nata-naumova@51.250.106.243:/home/nata-naumova/react-mesto-api-full/frontend"
+    "deploy": "scp -r ./build/* nata-naumova@51.250.106.243:/home/nata-naumova/frontend"
   },
   "eslintConfig": {
     "extends": [

@@ -1,8 +1,0 @@
-.auth-content__login-link {
-  text-decoration: none;
-  color: #ffffff;
-}
-.auth-content__login-link:hover {
-  opacity: 0.6;
-  transition: 0.3s;
-}

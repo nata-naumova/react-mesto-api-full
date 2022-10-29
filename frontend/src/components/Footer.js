@@ -1,11 +1,11 @@
-export default function Footer() {
-    const currentYear = new Date().getFullYear();
+import React from 'react';
 
+export function Footer() {
+    let today = new Date();
+    let year = today.getFullYear();
     return (
-        <footer className='footer'>
-            <p className='footer__copyright'>
-                &copy; {currentYear} Mesto Russia
-            </p>
+        <footer className="footer">
+            <p className="footer__copyright">&copy;&nbsp;{year} Mesto Russia</p>
         </footer>
-    );
+    )
 }

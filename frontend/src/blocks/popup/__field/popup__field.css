@@ -1,0 +1,17 @@
+.popup__field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 358px;
+}
+.popup__field:not(:last-child) {
+    margin-bottom: 35px;
+}
+.popup__field:last-of-type {
+    margin-bottom: 50px;
+}
+@media screen and (max-width: 425px) {
+    .popup__field:last-of-type {
+        margin-bottom: 45px;
+    }
+}

@@ -1,21 +1,19 @@
 const mongoose = require('mongoose');
-const { urlPattern } = require('../utils/patterns');
+const isURL = require('validator/lib/isURL');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
+    required: true,
     minlength: 2,
     maxlength: 30,
-    required: true,
   },
   link: {
     type: String,
     required: true,
     validate: {
-      validator(v) {
-        return urlPattern.test(v);
-      },
-      message: 'Неккоректная ссылка.',
+      validator: (value) => isURL(value),
+      message: 'Некорректная ссылка',
     },
   },
   owner: {
@@ -23,11 +21,13 @@ const cardSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    default: [],
-  }],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+      default: [],
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

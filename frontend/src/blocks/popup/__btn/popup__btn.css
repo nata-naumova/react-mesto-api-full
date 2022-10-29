@@ -1,0 +1,15 @@
+.popup__btn {
+    cursor: pointer;
+    border: none;
+    background: #000000;
+    color: #ffffff;
+    border-radius: 2px;
+    width: 100%;
+    padding: 14px 0 18px;
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+.popup__btn:hover {
+    opacity: 0.8;
+}

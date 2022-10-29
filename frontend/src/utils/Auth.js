@@ -1,80 +1,71 @@
-export class Auth {
-    constructor(config) {
-        this.baseURL = config.baseURL
-    }
-    //registration
-    register(email, password) {
-        return fetch(`${this.baseURL}/signup`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-            }),
-        })
-            .then((res) => {
-                if (res.status !== 400) {
-                    return res.json();
-                } else {
-                    throw new Error('Некорректно заполнено одно из полей');
-                }
-            })
-            .then((res) => {
-                return res;
-            })
-    };
-    //authorisation
-    authorize(email, password) {
-        return fetch(`${this.baseURL}/signin`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password }),
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    return res.json();
-                }
-                if (res.status === 400) {
-                    throw new Error('Не передано одно из полей');
-                }
-                if (res.status === 401) {
-                    throw new Error('Пользователь с email не найден');
-                }
-            })
-    };
-    //get access as a loggedIn user
-    getData(token) {
-        return fetch(`${this.baseURL}/users/me`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-            .then((res) => {
-                if (res.status === 200) {
-                    return res.json();
-                }
-                if (res.status === 400) {
-                    throw new Error('Токен не передан или передан не в том формате');
-                }
-                if (res.status === 401) {
-                    throw new Error('Переданный токен некорректен');
-                }
-            })
-            .then((data) => {
-                return data;
-            })
-    };
-}
+export const BASE_URL = "http://localhost:3000";
 
-export const auth = new Auth({
-    baseURL: 'https://api.mesto.nata.nomoredomains.icu',
-})
+export const register = (password, email) => {
+    return fetch(`${BASE_URL}/signup`, {
+        method: "POST",
+        headers: {
+            "Accept": 'application/json',
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password, email }),
+    })
+        .then((response) => {
+            try {
+                if (response.status === 201) {
+                    return response.json();
+                } else if (response.status === 400) {
+                    console.log('некорректно заполнено одно из полей');
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        })
+        .then((res) => {
+            return res;
+        })
+        .catch((err) => {
+            console.log(err);
+        }
+        );
+};
+
+export const authorize = (password, email) => {
+    return fetch(`${BASE_URL}/signin`, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password, email }),
+    })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                return response.json();
+            } else if (response.status === 400) {
+                console.log('не передано одно из полей');
+            } else if (response.status === 401) {
+                console.log('401');
+            }
+        })
+        .then((data) => {
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                return data;
+            }
+        })
+        .catch((err) => console.log(err));
+};
+
+export const checkToken = (token) => {
+    return fetch(`${BASE_URL}/users/me`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
+    })
+        .then(res => res.json())
+        .then(data => data)
+} 

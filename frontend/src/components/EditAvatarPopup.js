@@ -1,41 +1,41 @@
-import {React, useEffect, useRef} from 'react';
-import PopupWithForm from './PopupWithForm';
+import React, { useRef } from "react";
+import PopupWithForm from "./popups/PopupWithForm.js";
 
-export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
-    const avatarRef = useRef();
-    //reset inputs on close
-    useEffect(() => {
-        avatarRef.current.value = '';
-    }, [isOpen]);
+export function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+    /* ---------- Используем реф, чтобы получить прямой доступ к DOM-элементу инпута и его значению ----------- */
+    const userAvatarRef = useRef();
 
     function handleSubmit(e) {
         e.preventDefault();
-        onUpdateAvatar(avatarRef.current.value);
+
+        onUpdateAvatar({
+            avatar: userAvatarRef.current.value,
+        });
     }
 
     return (
         <PopupWithForm
-            name='avatar'
-            title='Обновить аватар'
-            defaultValue='Сохранить'
+            name="avatar"
+            title="Обновить аватар"
+            button="Сохранить"
             isOpen={isOpen}
             onClose={onClose}
             onSubmit={handleSubmit}
-            isLoading={isLoading}
         >
-            <label className='form__input-label' htmlFor='avatar'>
-                <input
-                    ref={avatarRef}
-                    type='url'
-                    id='avatar'
-                    name='avatar'
-                    placeholder='Ссылка на новый аватар'
-                    className='form__input'
-                    required
-                />
-                <span className='form__input-error' id='avatar-error'>
-                </span>
-            </label>
+            <>
+                <label htmlFor="input-avatar" className="popup__field">
+                    <input
+                        type="url"
+                        id="input-avatar"
+                        name="avatar"
+                        className="popup__input"
+                        placeholder="Ссылка на картинку"
+                        required
+                        ref={userAvatarRef}
+                    />
+                    <span className="popup__input-error" id="input-avatar-error"></span>
+                </label>
+            </>
         </PopupWithForm>
-    );
+    )
 }

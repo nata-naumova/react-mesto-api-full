@@ -1,33 +1,23 @@
-/* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
-const UnauthoriedError = require('./errors/unauthorized-error');
-const { errorMessage } = require('../utils/errors');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
-
-const handleAuthError = () => {
-  throw new UnauthoriedError(errorMessage.authorization.unauthorized);
-};
-
-const extractBearerToken = (header) => header.replace('Bearer ', '');
-
+const { SEKRET_KEY } = require('../constants');
+const UnauthorizedError = require('../errors/UnauthorizedError'); // 401
+/* 5. Сделайте мидлвэр для авторизации */
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
+  const { authorization } = req.headers; // достаём авторизационный заголовок
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError();
+    // убеждаемся, что он есть или начинается с Bearer
+    return next(new UnauthorizedError('Необходима авторизация.'));
   }
-
-  const token = extractBearerToken(authorization);
+  const token = authorization.replace('Bearer ', ''); // Извлекаем токен
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
+    payload = jwt.verify(token, SEKRET_KEY); // Верификация токена
   } catch (err) {
-    return handleAuthError();
+    return next(new UnauthorizedError('Необходима авторизация.'));
   }
 
-  req.user = payload;
+  req.user = payload; // записываем пейлоуд в объект запроса
 
-  next();
+  return next(); // пропускаем запрос дальше
 };

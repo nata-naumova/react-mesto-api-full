@@ -1,0 +1,6 @@
+.element__img-wrapper {
+    cursor: pointer;
+    display: block;
+    height: 282px;
+    position: relative;
+}
