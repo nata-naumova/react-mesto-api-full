@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const isEmail = require('validator/lib/isEmail');
+const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const { AVATAR_REGEX } = require('../constants');
-const UnauthorizedError = require('../errors/UnauthorizedError');
-/* 1. Добавьте email и password к схеме пользователя */
+const { errorMessage } = require('../utils/errors');
+const { urlPattern } = require('../utils/patterns');
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,40 +19,43 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (v) => AVATAR_REGEX.test(v),
-      message: 'Некорректная ссылка',
+      validator(v) {
+        return urlPattern.test(v);
+      },
+      message: 'Неккоректная ссылка.',
     },
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    validate: {
-      validator: (value) => isEmail(value),
-      message: 'Некорректный email',
+    validate(email) {
+      if (!validator.isEmail(email)) {
+        throw new Error('Некорректный email.');
+      }
     },
   },
   password: {
     type: String,
     required: true,
-    select: false, // необходимо добавить поле select
+    select: false,
   },
 });
 
-userSchema.statics.findUserByCredentials = function findUser(email, password) {
-  /* 10. Сделайте так, чтобы API не возвращал хеш пароля */
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+        return Promise.reject(new Error(errorMessage.authorization.failed));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+            return Promise.reject(new Error(errorMessage.authorization.failed));
           }
+
           return user;
         });
     });

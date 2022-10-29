@@ -1,0 +1,15 @@
+.header__menu-button {
+  width: 24px;
+  height: 21px;
+  padding: 0;
+  border: none;
+  background: none;
+  background-image: url(../../../images/icons/menu-button.svg);
+  background-size: 24px 21px;
+  cursor: pointer;
+}
+
+.header__menu-button:hover {
+  opacity: 0.6;
+  transition: 0.3s;
+}

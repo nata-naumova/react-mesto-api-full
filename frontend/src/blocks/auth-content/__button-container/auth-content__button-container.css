@@ -1,0 +1,10 @@
+.auth-content__button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+@media screen and (max-width: 767px) {
+  .auth-content__button-container {
+    gap: 20px;
+  }
+}

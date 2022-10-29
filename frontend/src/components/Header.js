@@ -1,37 +1,47 @@
+import logo from '../images/logo.svg';
 import React from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
+import { useWindowDimensions } from '../hooks/useWindowDimensions';
+import Menu from './Menu';
 
-export function Header({ loggedIn, src, email, handleSignOut }) {
-    const location = useLocation();
+export default function Header({ isLoggedIn, onSignOut, email, isMenuActive, onMenuClick }) {
+    //linkURL & linkText depend on the current path
+    const { pathname } = useLocation();
+    const linkText = `${pathname === '/sign-up' ? 'Войти' : 'Регистрация'}`;
+    const linkURL = `${pathname === '/sign-up' ? '/sign-in' : '/sign-up'}`;
+    const { width } = useWindowDimensions();
+    const isMobile = (width <= 767);
 
     return (
-        <header className="header">
-            <img
-                className="header__logo"
-                src={src}
-                alt="Логотип сайта"
-            />
+        <>
+            {isLoggedIn && isMobile && isMenuActive &&
+                <Menu
+                    email={email}
+                    onSignOut={onSignOut} />
+            }
 
-            {location.pathname === '/sign-up' && (
-                <Link to="/sign-in" className="header__link">
-                    Войти
-                </Link>
-            )}
-
-            {location.pathname === '/sign-in' && (
-                <Link to="/sign-up" className="header__link">
-                    Регистрация
-                </Link>
-            )}
-
-            {loggedIn && (
-                <div className="header__info">
-                    <p className="header__title">{email}</p>
-                    <button className="header__btn btn" onClick={handleSignOut}>
-                        Выйти
-                    </button>
-                </div>
-            )}
-        </header>
-    )
+            <header className='header'>
+                <img
+                    src={logo}
+                    alt='логотип Место'
+                    className='header__logo'
+                />
+                {isLoggedIn
+                    ? (isMobile
+                        ? <button
+                            className={`header__menu-button ${isMenuActive && 'header__menu-button_active'}`}
+                            onClick={onMenuClick} />
+                        : <Menu
+                            email={email}
+                            onSignOut={onSignOut} />
+                    )
+                    : <Link
+                        to={linkURL}
+                        className='header__nav-link'>
+                        {linkText}
+                    </Link>
+                }
+            </header>
+        </>
+    );
 }

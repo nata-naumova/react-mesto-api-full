@@ -1,46 +1,67 @@
-import React from "react";
+import { React, useState } from 'react';
 
-function Login({ handleSubmitLogin }) {
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+export default function Login(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault(e);
-        handleSubmitLogin({ email, password })
-    };
+  function handleEmailChange(evt) {
+    setEmail(evt.target.value);
+  }
+  function handlePasswordChange(evt) {
+    setPassword(evt.target.value);
+  }
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    if (!email || !password) {
+      return;
+    }
+    props.onLogin({ email, password })
+  };
 
-    return (
-        <div className="auth">
-            <p className="auth__title">Вход</p>
-            <form onSubmit={handleSubmit} className="auth__form">
-                <input
-                    className="auth__input"
-                    required
-                    id="username"
-                    name="email"
-                    type="text"
-                    placeholder="Email"
-                    value={email}
-                    autoComplete="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    className="auth__input"
-                    required
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Пароль"
-                    value={password}
-                    autoComplete="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit" onSubmit={handleSubmit} className="auth__btn">
-                    Войти
-                </button>
-            </form>
+  return (
+    <div className='auth-content'>
+      <p className='auth-content__heading'>
+        Вход
+      </p>
+      <form onSubmit={handleSubmit} className='auth-content__form'>
+        <fieldset className='auth-content__fieldset'>
+          <input
+            required
+            className='auth-content__input'
+            id='email'
+            name='email'
+            type='text'
+            placeholder='Email'
+            autoComplete='off'
+            onChange={handleEmailChange}
+            value={email}
+          />
+
+          <input
+            required
+            className='auth-content__input'
+            id='password'
+            name='password'
+            minLength='5'
+            maxLength='20'
+            type='password'
+            placeholder='Пароль'
+            autoComplete='off'
+            onChange={handlePasswordChange}
+            value={password}
+          />
+        </fieldset>
+
+        <div className='auth-content__button-container'>
+          <button
+            type='submit'
+            className={`auth-content__submit-button ${props.isLoading && 'auth-content__submit-button_inactive'}`}
+            disabled={props.isLoading}
+          >
+          {`${props.isLoading ? 'Выполняется вход...' : 'Войти'}`}
+          </button>
         </div>
-    );
+      </form>
+    </div>
+  )
 }
-
-export default Login;

@@ -1,22 +1,17 @@
 .profile {
-    margin-bottom: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  color: #ffffff;
+  box-sizing: border-box;
+  padding-top: 40px;
+  display: grid;
+  grid-template-columns: minmax(138px, 150px) 312px minmax(24px, 1fr) minmax(150px, 1fr);
+  grid-template-rows: 60px 60px;
+  align-items: center;
 }
-@media screen and (max-width: 768px) {
-    .profile {
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-}
-@media screen and (max-width: 600px) {
-    .profile {
-        margin-top: 42px;
-        margin-bottom: 36px;
 
-        flex-direction: column;
-        text-align: center;
-    }
+@media screen and (max-width: 767px) {
+  .profile {
+    padding-top: 42px;
+    grid-template-columns: minmax(18px, 245px) 189px minmax(18px, 245px);
+    grid-template-rows: 146px 26px 64px 50px;
+  }
 }

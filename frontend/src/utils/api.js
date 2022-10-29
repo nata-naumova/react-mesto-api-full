@@ -1,112 +1,120 @@
-class Api {
-    constructor(options) {
-        this._baseUrl = options.baseUrl;
-        this._headers = options.headers;
+export class Api {
+  constructor(config) {
+    this.source = config.source
+  }
+  //checking if the server's responce is ok
+  _checkResponse(res) {
+    if (res.ok) {
+      return res.json();
     }
-    _parseResponse(res) {
-        if (res.ok) {
-            return res.json();
-        }
-        /* ---------- Eсли ошибка, отклоняем промис ----------- */
-        return Promise.reject(`Ошибка: ${res.status}`)
-    }
-
-    /* ---------- Загрузка информации о пользователе с сервера ----------- */
-    getUserInfo() {
-        return fetch(`${this._baseUrl}/users/me`, {
-            method: 'GET',
-            headers: this._headers,
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Загрузка карточек с сервера ----------- */
-    getInitialCards() {
-        return fetch(`${this._baseUrl}/cards`, {
-            method: 'GET',
-            headers: this._headers,
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Редактирование профиля ----------- */
-    editUserInfo(data) {
-        return fetch(`${this._baseUrl}/users/me`, {
-            method: 'PATCH',
-            headers: this._headers,
-            body: JSON.stringify({
-                name: data.name,
-                about: data.about
-            }),
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Добавление новой карточки ----------- */
-    addCard(data) {
-        return fetch(`${this._baseUrl}/cards`, {
-            method: 'POST',
-            headers: this._headers,
-            body: JSON.stringify({
-                name: data.name,
-                link: data.link
-            }),
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Удаление карточки ----------- */
-    deleteCard(cardId) {
-        return fetch(`${this._baseUrl}/cards/${cardId}`, {
-            method: 'DELETE',
-            headers: this._headers,
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Постановка и снятие лайка ----------- */
-    setLike(card) {
-        return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-            method: 'PUT',
-            headers: this._headers,
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    deleteLike(card) {
-        return fetch(`${this._baseUrl}/cards/likes/${card._id}`, {
-            method: 'DELETE',
-            headers: this._headers,
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-
-    /* ---------- Обновление аватара пользователя ----------- */
-    editAvatar(data) {
-        return fetch(`${this._baseUrl}/users/me/avatar`, {
-            method: 'PATCH',
-            headers: this._headers,
-            body: JSON.stringify({
-                avatar: data.avatar
-            }),
-            credentials: 'include',
-        })
-            .then(this._parseResponse);
-    }
-}
-const api = new Api({
-    baseUrl: 'https://api.mesto.nata.nomoredomains.icu', //back
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
+    return Promise.reject(`Ошибка: ${res.status}`);
+  }
+  //get user info
+  getUserInfo(token) {
+    return fetch(`${this.source}/users/me`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
+      }
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //update user info
+  setUserInfo({ name, about }, token) {
+    return fetch(`${this.source}/users/me`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        about,
+      })
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //update user avatar
+  setUserAvatar(avatar, token) {
+    return fetch(`${this.source}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        avatar: avatar
+      })
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //get cards
+  getCards(token) {
+    return fetch(`${this.source}/cards`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //add a new card
+  postCard({ name: place, link: source }, token) {
+    return fetch(`${this.source}/cards`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: place,
+        link: source
+      })
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //delete selected card
+  deleteCard(cardId, token) {
+    return fetch(`${this.source}/cards/${cardId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //like selected card
+  setLike(cardId, token) {
+    return fetch(`${this.source}/cards/${cardId}/likes`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //remove like on selected card
+  deleteLike(cardId, token) {
+    return fetch(`${this.source}/cards/${cardId}/likes`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then(res => this._checkResponse(res))
+  }
+  //check out whether current card is liked, then put or delete it
+  changeLikeCardStatus(cardId, isLiked, token) {
+    if (isLiked) {
+      return this.setLike(cardId, token);
+    } else {
+      return this.deleteLike(cardId, token);
     }
-});
+  }
+}
 
-export default api;
+export const api = new Api({
+  source: 'http://localhost:3000',
+})

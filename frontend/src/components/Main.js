@@ -1,62 +1,66 @@
-import React, { useContext } from 'react';
+import {React, useContext} from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 
-export function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick, cards, onCardLike, onCardDelete }) {
-    /* ---------- Подписка на контекст ----------- */
+export default function Main({
+    onEditAvatar, onEditProfile, onAddPlace,
+    cards, onCardClick, onCardLike, onCardDeleteClick
+}) {
     const currentUser = useContext(CurrentUserContext);
-    const { name, about, avatar } = currentUser;
 
     return (
-        <main className="main">
-            <section className="profile">
+        <main className='content'>
+            <section className='profile'>
                 <img
-                    src={avatar}
-                    alt="Аватар пользователя"
-                    className="profile__avatar"
+                    src={currentUser.avatar}
+                    alt='фото профиля'
+                    className='profile__avatar'
                 />
                 <button
-                    className="profile__avatar-btn"
+                    type='button'
+                    className='profile__change-avatar'
                     onClick={onEditAvatar}
                 ></button>
-
-                <div className="profile__info">
-                    <div className="profile__top">
-                        <h1 className="profile__title">{name}</h1>
-                        <button
-                            type="button"
-                            className="profile__edit-btn btn popup-edit-profile"
-                            aria-label="Редактировать профиль"
-                            data-dismiss="popup_1"
-                            onClick={onEditProfile}
-                        ></button>
-                    </div>
-                    <p className="profile__subtitle">{about}</p>
+                <div className='profile__info'>
+                    <h1
+                        className='profile__name'>
+                        {currentUser.name}
+                    </h1>
+                    <p
+                        className='profile__desc'>
+                        {currentUser.about}
+                    </p>
                 </div>
                 <button
-                    type="button"
-                    className="profile__add-btn btn popup-add-card"
-                    aria-label="Добавить запись"
-                    data-dismiss="popup_2"
+                    type='button'
+                    aria-label='редактировать информацию профиля'
+                    className='profile__edit-info'
+                    onClick={onEditProfile}
+                ></button>
+
+                <button
+                    type='button'
+                    aria-label='добавить фото'
+                    className='profile__add-card'
                     onClick={onAddPlace}
                 ></button>
             </section>
 
-            <section className="elements">
-                {
-                    cards.map((card) => {
+            <section className='gallery'>
+                <ul aria-label='фото-галерея' className='gallery__list'>
+                    {cards.map((card) => {
                         return (
                             <Card
-                                card={card}
-                                key={card._id}
                                 onCardClick={onCardClick}
                                 onCardLike={onCardLike}
-                                onCardDelete={onCardDelete}
+                                onCardDeleteClick={onCardDeleteClick}
+                                key={card._id}
+                                card={card}
                             />
                         )
-                    })
-                }
+                    })}
+                </ul>
             </section>
         </main>
-    )
+    );
 }

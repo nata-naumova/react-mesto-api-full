@@ -1,53 +1,73 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { React, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-function Register({ handleSubmitRegister }) {
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+export default function Register(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-    const handleSubmit = (e) => {
-        e.preventDefault(e);
-        handleSubmitRegister({ email, password })
-    };
+  function handleEmailChange(evt) {
+    setEmail(evt.target.value);
+  }
+  function handlePasswordChange(evt) {
+    setPassword(evt.target.value);
+  }
+  function handleSubmit(evt) {
+    evt.preventDefault();
+    props.onRegister({ email, password })
+  }
 
-    return (
-        <div className="auth">
-            <p className="auth__title">Регистрация</p>
-            <form onSubmit={handleSubmit} className="auth__form">
-                <input
-                    className="auth__input"
-                    required
-                    id="username"
-                    name="email"
-                    type="text"
-                    placeholder="Email"
-                    value={email}
-                    autoComplete="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    className="auth__input"
-                    required
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Пароль"
-                    value={password}
-                    autoComplete="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit" onSubmit={handleSubmit} className="auth__btn">
-                    Зарегистрироваться
-                </button>
-                <div className="auth__signin">
-                    <p className="auth__subtitle">Уже зарегистрированы?</p>
-                    <Link to="/sign-in" className="auth__subtitle">
-                        Войти
-                    </Link>
-                </div>
-            </form>
+  return (
+    <div className='auth-content'>
+      <p className='auth-content__heading'>
+        Регистрация
+      </p>
+      <form onSubmit={handleSubmit} className='auth-content__form'>
+        <fieldset className='auth-content__fieldset'>
+          <input
+            className='auth-content__input'
+            id='email'
+            name='email'
+            type='email'
+            placeholder='Email'
+            autoComplete='off'
+            onChange={handleEmailChange}
+            value={email}
+          />
+
+          <input
+            className='auth-content__input'
+            id='password'
+            name='password'
+            minLength='5'
+            maxLength='20'
+            type='password'
+            placeholder='Пароль'
+            autoComplete='off'
+            onChange={handlePasswordChange}
+            value={password}
+          />
+        </fieldset>
+
+        <div className='auth-content__button-container'>
+          <button
+            type='submit'
+            className={`auth-content__submit-button ${props.isLoading && 'auth-content__submit-button_inactive'}`}
+            disabled={props.isLoading}
+          >
+          {`${props.isLoading ? 'Регистрация...' : 'Зарегистрироваться'}`}
+          </button>
+
+          <div className='auth-content__signin'>
+            <p className='auth-content__signin-text'>
+              Уже зарегистрированы?
+              <Link to='./Login' className='auth-content__login-link'>
+                {' '}
+                Войти
+              </Link>
+            </p>
+          </div>
         </div>
-    );
+      </form>
+    </div>
+  );
 }
-
-export default Register;

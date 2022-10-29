@@ -1,88 +1,101 @@
+/* eslint-disable no-shadow */
 const Card = require('../models/card');
-const BadRequestError = require('../errors/BadRequestError');
-const NotFoundError = require('../errors/NotFoundError');
-const ForbiddenError = require('../errors/ForbiddenError');
+const { errorMessage } = require('../utils/errors');
+const NotFoundError = require('../middlewares/errors/not-found-error');
+const BadRequestError = require('../middlewares/errors/bad-request-error');
+const ForbiddenError = require('../middlewares/errors/forbidden-error');
 
-// Получение карточек
+// get all existing cards
 module.exports.getCards = (req, res, next) => {
-  Card.find({ owner: req.user._id })
-    .then((cards) => res.status(200).send(cards))
+  Card.find({})
+    .then((cards) => res.status(200).send({ data: cards }))
     .catch(next);
 };
 
-// Создание новой карточки
+// create card
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('400 — Переданы некорректные данные при создании карточки.'));
+        next(new BadRequestError(errorMessage.badRequest.card.create));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
-// Удаление карточки
+// delete card
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((cards) => {
-      if (!cards) {
-        throw new NotFoundError('404 — Карточка не найдена.');
-      }
-      if (!cards.owner.equals(req.user._id)) {
-        /* 9. Проконтролируйте права */
-        throw new ForbiddenError('403 — Нельзя удалить чужую карточку. ');
-      }
-      return cards.remove().then(() => res.status(200).send(cards));
+    .orFail(() => {
+      throw new NotFoundError(errorMessage.notFound.card.delete);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('400 — Ошибка обработки данных.'));
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError(errorMessage.forbidden.card.delete);
+      } else {
+        return Card.findByIdAndDelete(req.params.cardId)
+          .then(() => {
+            res.status(200).send(card);
+          });
       }
-      return next(err);
-    });
+    })
+    .catch(next);
 };
 
-// Поставить лайк
+// set card like
 module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('404 — Карточка не найдена.');
-      }
-      res.status(200).send({ card });
+  Card.findById(req.params.cardId)
+    .orFail(() => {
+      throw new NotFoundError(errorMessage.notFound.card.update);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('400 — Ошибка обработки данных.'));
-      }
-      return next(err);
+    .then(() => {
+      Card.findByIdAndUpdate(
+        req.params.cardId,
+        { $addToSet: { likes: req.user._id } },
+        { new: true },
+      )
+        .then((card) => {
+          res.status(200).send(card);
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            next(new NotFoundError(errorMessage.notFound.card.update));
+          } if (err.name === 'ValidationError') {
+            next(new BadRequestError(errorMessage.badRequest.card.like));
+          } else {
+            next(err);
+          }
+        });
     });
 };
 
-// Удалить лайк
+// remove card like
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError('404 — Карточка не найдена. Лайк не удалось убрать.');
-      }
-      res.status(200).send({ card });
+  Card.findById(req.params.cardId)
+    .orFail(() => {
+      throw new NotFoundError(errorMessage.notFound.card.update);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('400 — Ошибка обработки данных.'));
-      }
-      return next(err);
+    .then(() => {
+      Card.findByIdAndUpdate(
+        req.params.cardId,
+        { $pull: { likes: req.user._id } },
+        { new: true },
+      )
+        .then((card) => {
+          res.status(200).send(card);
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            next(new NotFoundError(errorMessage.notFound.card.update));
+          } if (err.name === 'ValidationError') {
+            next(new BadRequestError(errorMessage.badRequest.card.dislike));
+          } else {
+            next(err);
+          }
+        });
     });
 };
