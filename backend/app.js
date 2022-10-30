@@ -1,11 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
 const mainErrors = require('./middlewares/main-err');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -28,10 +30,19 @@ async function main() {
 // МИДЛВАРЫ
 app.use(bodyParser.json());
 app.use(cors);
+app.use(helmet());
 // Подключаем роуты
 app.use(express.json());
-app.use(routes);
+app.use(requestLogger);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
+app.use(routes);
+app.use(errorLogger);
 // Централизованная обработка ошибок
 app.use(errors());
 app.use(mainErrors);

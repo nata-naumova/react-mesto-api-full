@@ -1,4 +1,12 @@
-export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu";
+//export const BASE_URL = "https://api.mesto.nata.nomoredomains.icu";
+export const BASE_URL = "http://localhost:3000";
+
+const getJson = (response) => {
+    if (response.ok) {
+        return response.json();
+    }
+    return console.log('Ошибка на сервере: ' + response.status + ' - ' + response.statusText);
+}
 
 export const register = (password, email) => {
     return fetch(`${BASE_URL}/signup`, {
@@ -9,25 +17,8 @@ export const register = (password, email) => {
         },
         body: JSON.stringify({ password, email }),
     })
-        .then((response) => {
-            try {
-                if (response.status === 201) {
-                    return response.json();
-                } else if (response.status === 400) {
-                    console.log('некорректно заполнено одно из полей');
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        })
-        .then((res) => {
-            return res;
-        })
-        .catch((err) => {
-            console.log(err);
-        }
-        );
-};
+    .then(getJson)
+}
 
 export const authorize = (password, email) => {
     return fetch(`${BASE_URL}/signin`, {
@@ -38,23 +29,7 @@ export const authorize = (password, email) => {
         },
         body: JSON.stringify({ password, email }),
     })
-        .then((response) => {
-            console.log(response);
-            if (response.status === 200) {
-                return response.json();
-            } else if (response.status === 400) {
-                console.log('не передано одно из полей');
-            } else if (response.status === 401) {
-                console.log('401');
-            }
-        })
-        .then((data) => {
-            if (data.token) {
-                localStorage.setItem("token", data.token);
-                return data;
-            }
-        })
-        .catch((err) => console.log(err));
+    .then(getJson)
 };
 
 export const checkToken = (token) => {
@@ -66,6 +41,6 @@ export const checkToken = (token) => {
             'Authorization': `Bearer ${token}`,
         }
     })
-        .then(res => res.json())
-        .then(data => data)
+    .then(getJson)
+    /*.then(data => data)*/
 } 

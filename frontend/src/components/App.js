@@ -159,15 +159,17 @@ function App() {
   /* ---------- Регистрация ----------- */
   function handleSubmitRegister({ email, password }) {
     Auth.register(password, email)
-      .then((res) => {
-        setRegisration(true);
-        openInfoTooltip();
-        history.push('/sign-in');
+      .then(res => {
+        if(res.statusCode !== 400) {
+          setRegisration(true);
+          openInfoTooltip();
+          history.push('/sign-in');
+        }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(err => {
         setRegisration(false);
         openInfoTooltip();
+        console.log(err);
       });
   }
 
