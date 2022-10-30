@@ -91,15 +91,14 @@ function App() {
     if (isLiked) {
       // Отправляем запрос в API и получаем обновлённые данные карточки
       api.deleteLike(card, isLiked).then((newCard) => {
-        //console.log(newCard)
         setCards((cards) => 
-          cards.map((c) => c._id === card._id ? newCard : c)
+          cards.map((c) => c._id === card._id ? newCard.card : c)
         );
       }).catch(() => { console.log('Что-то пошло не так') })
     }
     else {
       api.setLike(card, !isLiked).then((newCard) => {
-        setCards((cards) => cards.map((c) => c._id === card._id ? newCard : c));
+        setCards((cards) => cards.map((c) => c._id === card._id ? newCard.card : c));
       }).catch(() => { console.log('Что-то пошло не так') })
     }
   }
